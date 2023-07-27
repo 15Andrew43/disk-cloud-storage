@@ -1,0 +1,22 @@
+.container {
+    /*width: 300px;*/
+    /*!*border: 1px solid black;*!*/
+    /*height: 250px;*/
+    /*background-color: aquamarine;*/
+    display: flex; /* Используем flexbox для расположения элементов в строку */
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.navigation {
+    display: flex; /* Используем flexbox для расположения элементов в строку */
+    flex-direction: column;
+    justify-content: center;
+    align-content: flex-start;
+    gap: 15px;
+    margin-left: 20px;
+}
+
+.createButton {
+    margin: 20px; /* Отступ справа для кнопки "Создать" */
+}
