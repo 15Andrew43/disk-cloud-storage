@@ -24,7 +24,7 @@ function Body() {
             <Breadcrumb>
                 <Breadcrumb.Item href="#">Мой диск</Breadcrumb.Item>
                 <Breadcrumb.Item href="https://getbootstrap.com/docs/4.0/components/breadcrumb/">
-                    Андрей лох
+                    Андрей лохx
                 </Breadcrumb.Item>
                 <Breadcrumb.Item active>Хехех</Breadcrumb.Item>
             </Breadcrumb>
