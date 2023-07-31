@@ -1,5 +1,4 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import Header from "./components/Header/Header";
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -11,7 +10,8 @@ import Body from "./components/Body/Body";
 function App() {
   return (
       <div className={`background-style`}>
-        <Header/>
+          <div className={`header-style`}><Header /></div>
+
         <div className={`leftbar_body-style`}>
           <div className={`leftbar-style`}>
               <LeftBar/>

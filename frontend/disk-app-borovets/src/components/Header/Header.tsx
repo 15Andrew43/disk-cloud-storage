@@ -8,6 +8,7 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { Col, Row } from "react-bootstrap";
+import style from "../Body/Body.module.css";
 
 
 // className={`d-flex ${style.my_style}`}
@@ -16,9 +17,12 @@ function Header() {
     return (
         <Navbar expand="lg" className="">
             <Container fluid>
-                <Navbar.Brand href="#"><b>Диск</b></Navbar.Brand>
+            {/*<Container className={`${style.headerdivs}`}>*/}
 
-                    <Form className="d-flex" style={{width: "600px"}}>
+                <div><Navbar.Brand href="#"><b>Диск</b></Navbar.Brand></div>
+
+                <div>
+                    <Form className="d-flex" style={{width: "50vw"}}>
                         <Form.Control
                             type="search"
                             placeholder="Поиск на диске"
@@ -27,17 +31,20 @@ function Header() {
                         />
                         <Button variant="outline-success">Найти</Button>
                     </Form>
+                </div>
 
-                <NavDropdown title="Аккаунт" id="navbarScrollingDropdown" style={{marginRight: "100px"}}>
-                    <NavDropdown.Item href="#action3">Войти</NavDropdown.Item>
-                    <NavDropdown.Item href="#action4">
-                        Настройки
-                    </NavDropdown.Item>
-                    <NavDropdown.Divider />
-                    <NavDropdown.Item href="#action5">
-                        Выйти
-                    </NavDropdown.Item>
-                </NavDropdown>
+                <div>
+                    <NavDropdown title="Аккаунт" id="navbarScrollingDropdown" style={{marginRight: "7vw"}}>
+                        <NavDropdown.Item href="#action3">Войти</NavDropdown.Item>
+                        <NavDropdown.Item href="#action4">
+                            Настройки
+                        </NavDropdown.Item>
+                        <NavDropdown.Divider />
+                        <NavDropdown.Item href="#action5">
+                            Выйти
+                        </NavDropdown.Item>
+                    </NavDropdown>
+                </div>
 
             </Container>
         </Navbar>

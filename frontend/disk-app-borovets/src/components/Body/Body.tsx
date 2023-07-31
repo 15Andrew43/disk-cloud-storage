@@ -13,9 +13,18 @@ import Breadcrumb from 'react-bootstrap/Breadcrumb';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import FileList from "/Users/nikolayborovets/Desktop/FALT_MIPT/inf/extracurricular/disk-cloud-storage/frontend/disk-app-borovets/src/components/Other/FileList";
+import filesData from "/Users/nikolayborovets/Desktop/FALT_MIPT/inf/extracurricular/disk-cloud-storage/frontend/disk-app-borovets/src/components/Other/filesData";
+
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 import style from './Body.module.css'
+import 'bootstrap-icons/font/bootstrap-icons.css';
+
+
+
+
 
 function Body() {
     return (
@@ -24,7 +33,7 @@ function Body() {
             <Breadcrumb>
                 <Breadcrumb.Item href="#">Мой диск</Breadcrumb.Item>
                 <Breadcrumb.Item href="https://getbootstrap.com/docs/4.0/components/breadcrumb/">
-                    Андрей лохx
+                    Андрей лох
                 </Breadcrumb.Item>
                 <Breadcrumb.Item active>Хехех</Breadcrumb.Item>
             </Breadcrumb>
@@ -32,200 +41,43 @@ function Body() {
             {/*<h3 className={`${style.path}`}>Мой диск</h3>*/}
             <div className={`${style.filters}`}>
                 <DropdownButton id="dropdown-basic-button" title="Тип">
-                    <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                    <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                    <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
+                    <Dropdown.Item href="#/action-1">PDF</Dropdown.Item>
+                    <Dropdown.Item href="#/action-2">Фото</Dropdown.Item>
+                    <Dropdown.Item href="#/action-3">Папки</Dropdown.Item>
                 </DropdownButton>
                 <DropdownButton id="dropdown-basic-button" title="Люди">
-                    <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                    <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                    <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
+                    <Dropdown.Item href="#/action-1">Андрей</Dropdown.Item>
+                    <Dropdown.Item href="#/action-2">Коля</Dropdown.Item>
+                    <Dropdown.Item href="#/action-3">Мама</Dropdown.Item>
+                    <Dropdown.Item href="#/action-4">Папа</Dropdown.Item>
                 </DropdownButton>
                 <DropdownButton id="dropdown-basic-button" title="Изменено">
-                    <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                    <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                    <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
+                    <Dropdown.Item href="#/action-1">Сегодня</Dropdown.Item>
+                    <Dropdown.Item href="#/action-2">За последние 7 дней</Dropdown.Item>
+                    <Dropdown.Item href="#/action-3">За последние 30 дней</Dropdown.Item>
                 </DropdownButton>
             </div>
             <div className={`${style.sortbuttons}`}>
-                {/*<Button as="input" type="button" value="Input" />{' '}*/}
                 <Button as="input" type="button" value="Название" />{' '}
-                <Button as="input" type="button" value="Владелец" />{' '}
+                <DropdownButton id="dropdown-basic-button" title="Владелец">
+                    <Dropdown.Item href="#/action-1">Андрей</Dropdown.Item>
+                    <Dropdown.Item href="#/action-2">Коля</Dropdown.Item>
+                    <Dropdown.Item href="#/action-3">Мама</Dropdown.Item>
+                    <Dropdown.Item href="#/action-4">Папа</Dropdown.Item>
+                </DropdownButton>
                 <DropdownButton id="dropdown-basic-button" title="Изменено">
-                    <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                    <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                    <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
+                    <Dropdown.Item href="#/action-1">По дате изменения</Dropdown.Item>
+                    <Dropdown.Item href="#/action-2">По дате моих изменений</Dropdown.Item>
+                    <Dropdown.Item href="#/action-3">По дате просмотра</Dropdown.Item>
                 </DropdownButton>
                 <Button as="input" type="button" value="Размер" />{' '}
-                {/*<Button as="input" type="button" value="Размер" />{' '}*/}
+                <div></div> {/*мне похуй, я ничего лучше не придумал, чем пустой div, чтобы все сдвинулось влево*/}
 
-                {/*<Row className={`${style.line_file}`}>*/}
-                {/*    <Col><Button as="input" type="button" value="Название" />{' '}</Col>*/}
-                {/*    <Col><Button as="input" type="button" value="Владелец" />{' '}</Col>*/}
-                {/*    <Col>*/}
-                {/*        <DropdownButton id="dropdown-basic-button" title="Изменено">*/}
-                {/*            <Dropdown.Item href="#/action-1">Action</Dropdown.Item>*/}
-                {/*            <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>*/}
-                {/*            <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>*/}
-                {/*        </DropdownButton>*/}
-                {/*    </Col>*/}
-                {/*    <Col><Button as="input" type="button" value="Размер" />{' '}</Col>*/}
-                {/*    <Col><Button as="input" type="button" value="Размер" />{' '}</Col>*/}
-                {/*</Row>*/}
             </div>
             <div className={`${style.files} ${style.DivToScroll} ${style.DivWithScroll}`}>
-                <Container >
-                    {/*<Row className={`${style.line_file}`}>*/}
-                    {/*    <Col>1 of 4</Col>*/}
-                    {/*    <Col>2 of 4</Col>*/}
-                    {/*    <Col>3 of 4</Col>*/}
-                    {/*    <Col>4 of 4</Col>*/}
-                    {/*</Row>*/}
-                    {/*<Row className={`${style.line_file}`}>*/}
-                    {/*    <Col>1 of 4</Col>*/}
-                    {/*    <Col>2 of 4</Col>*/}
-                    {/*    <Col>3 of 4</Col>*/}
-                    {/*    <Col>4 of 4</Col>*/}
-                    {/*</Row>*/}
 
-                    <div className={`${style.line_file}`}>
-                        <div>1 of 4</div>
-                        <div>2 of 4</div>
-                        <div>3 of 4</div>
-                        <div>4 of 4</div>
-                    </div>                    <div className={`${style.line_file}`}>
-                        <div>1 of 4</div>
-                        <div>2 of 4</div>
-                        <div>3 of 4</div>
-                        <div>4 of 4</div>
-                    </div>                    <div className={`${style.line_file}`}>
-                        <div>1 of 4</div>
-                        <div>2 of 4</div>
-                        <div>3 of 4</div>
-                        <div>4 of 4</div>
-                    </div>                    <div className={`${style.line_file}`}>
-                        <div>1 of 4</div>
-                        <div>2 of 4</div>
-                        <div>3 of 4</div>
-                        <div>4 of 4</div>
-                    </div>                    <div className={`${style.line_file}`}>
-                        <div>1 of 4</div>
-                        <div>2 of 4</div>
-                        <div>3 of 4</div>
-                        <div>4 of 4</div>
-                    </div>                    <div className={`${style.line_file}`}>
-                        <div>1 of 4</div>
-                        <div>2 of 4</div>
-                        <div>3 of 4</div>
-                        <div>4 of 4</div>
-                    </div>                    <div className={`${style.line_file}`}>
-                        <div>1 of 4</div>
-                        <div>2 of 4</div>
-                        <div>3 of 4</div>
-                        <div>4 of 4</div>
-                    </div>                    <div className={`${style.line_file}`}>
-                        <div>1 of 4</div>
-                        <div>2 of 4</div>
-                        <div>3 of 4</div>
-                        <div>4 of 4</div>
-                    </div>                    <div className={`${style.line_file}`}>
-                        <div>1 of 4</div>
-                        <div>2 of 4</div>
-                        <div>3 of 4</div>
-                        <div>4 of 4</div>
-                    </div>                    <div className={`${style.line_file}`}>
-                        <div>1 of 4</div>
-                        <div>2 of 4</div>
-                        <div>3 of 4</div>
-                        <div>4 of 4</div>
-                    </div>                    <div className={`${style.line_file}`}>
-                        <div>1 of 4</div>
-                        <div>2 of 4</div>
-                        <div>3 of 4</div>
-                        <div>4 of 4</div>
-                    </div>                    <div className={`${style.line_file}`}>
-                        <div>1 of 4</div>
-                        <div>2 of 4</div>
-                        <div>3 of 4</div>
-                        <div>4 of 4</div>
-                    </div>                    <div className={`${style.line_file}`}>
-                        <div>1 of 4</div>
-                        <div>2 of 4</div>
-                        <div>3 of 4</div>
-                        <div>4 of 4</div>
-                    </div>                    <div className={`${style.line_file}`}>
-                        <div>1 of 4</div>
-                        <div>2 of 4</div>
-                        <div>3 of 4</div>
-                        <div>4 of 4</div>
-                    </div>                    <div className={`${style.line_file}`}>
-                        <div>1 of 4</div>
-                        <div>2 of 4</div>
-                        <div>3 of 4</div>
-                        <div>4 of 4</div>
-                    </div>                    <div className={`${style.line_file}`}>
-                        <div>1 of 4</div>
-                        <div>2 of 4</div>
-                        <div>3 of 4</div>
-                        <div>4 of 4</div>
-                    </div>                    <div className={`${style.line_file}`}>
-                        <div>1 of 4</div>
-                        <div>2 of 4</div>
-                        <div>3 of 4</div>
-                        <div>4 of 4</div>
-                    </div>                    <div className={`${style.line_file}`}>
-                        <div>1 of 4</div>
-                        <div>2 of 4</div>
-                        <div>3 of 4</div>
-                        <div>4 of 4</div>
-                    </div>                    <div className={`${style.line_file}`}>
-                        <div>1 of 4</div>
-                        <div>2 of 4</div>
-                        <div>3 of 4</div>
-                        <div>4 of 4</div>
-                    </div>                    <div className={`${style.line_file}`}>
-                        <div>1 of 4</div>
-                        <div>2 of 4</div>
-                        <div>3 of 4</div>
-                        <div>4 of 4</div>
-                    </div>                    <div className={`${style.line_file}`}>
-                        <div>1 of 4</div>
-                        <div>2 of 4</div>
-                        <div>3 of 4</div>
-                        <div>4 of 4</div>
-                    </div>                    <div className={`${style.line_file}`}>
-                        <div>1 of 4</div>
-                        <div>2 of 4</div>
-                        <div>3 of 4</div>
-                        <div>4 of 4</div>
-                    </div>                    <div className={`${style.line_file}`}>
-                        <div>1 of 4</div>
-                        <div>2 of 4</div>
-                        <div>3 of 4</div>
-                        <div>4 of 4</div>
-                    </div>                    <div className={`${style.line_file}`}>
-                        <div>1 of 4</div>
-                        <div>2 of 4</div>
-                        <div>3 of 4</div>
-                        <div>4 of 4</div>
-                    </div>                    <div className={`${style.line_file}`}>
-                        <div>1 of 4</div>
-                        <div>2 of 4</div>
-                        <div>3 of 4</div>
-                        <div>4 of 4</div>
-                    </div>                    <div className={`${style.line_file}`}>
-                        <div>1 of 4</div>
-                        <div>2 of 4</div>
-                        <div>3 of 4</div>
-                        <div>4 of 4</div>
-                    </div>                    <div className={`${style.line_file}`}>
-                        <div>1 of 4</div>
-                        <div>2 of 4</div>
-                        <div>3 of 4</div>
-                        <div>4 of 4</div>
-                    </div>
+                <FileList files={filesData} />
 
-                </Container>
             </div>
         </div>
     );
