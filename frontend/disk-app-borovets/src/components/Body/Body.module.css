@@ -1,6 +1,6 @@
 .container {
-    display: flex;
-    flex-direction: column;
+    /*display: flex;*/
+    /*flex-direction: column;*/
 }
 
 .path {
@@ -24,6 +24,8 @@
 }
 
 .sortbuttons {
+    margin-left: 10px;
+    margin-right: 10px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -31,10 +33,27 @@
 
 }
 
+/*.sortbuttons {*/
+/*    margin-left: 10px;*/
+/*    margin-right: 10px;*/
+/*    display: flex;*/
+/*    justify-content: space-between;*/
+/*    gap: 15px;*/
+/*    align-items: flex-start; !* Новый стиль *!*/
+/*}*/
+
+/*.sortbuttons > div {*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*}*/
+
+
+
+
 .DivToScroll{
+    margin-top: 5px;
     background-color: #F5F5F5;
     border: 1px solid #DDDDDD;
-    /*border-radius: 4px 0 4px 0;*/
     border-radius: 35px;
     color: #3B3C3E;
     font-size: 12px;
@@ -42,28 +61,18 @@
     left: -1px;
     padding: 10px 7px 5px;
     /*padding: 10px;*/
+
 }
 
 .DivWithScroll{
-    height: 532px;
-    overflow:scroll;
-    overflow-x:hidden;
+    /*!*height: 532px;*!*/
+    /*overflow:scroll;*/
+    /*overflow-x:hidden;*/
+    /*flex-grow: 1;*/
+    height: 65vh; /* Изменено на 80vh или другое значение в зависимости от вашего предпочтения */
+    overflow: auto; /* Изменено на auto */
+    flex-grow: 1;
+
 }
 
-.files {
-    display: flex;
-    margin-top: 10px;
-    flex-direction: row;
-    /*justify-content: space-between;*/
-}
 
-.line_file {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    border-top-style: dashed;
-    border-top-color: #D9D9D9;
-    /*margin-bottom: 10px;*/
-    /*gap: 15px;*/
-    padding: 5px;
-}
