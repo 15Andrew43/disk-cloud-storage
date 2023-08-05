@@ -1,47 +1,27 @@
-import io
-
 from rest_framework import serializers
-from rest_framework.parsers import JSONParser
-from rest_framework.renderers import JSONRenderer
-
-from .models import File
-
-# class FileModel:
-#     def __init__(self, name, n):
-#         self.name = name
-#         self.n = n
-
-class FileSerializer(serializers.Serializer):
-    name = serializers.CharField(max_length=255)
-    n = serializers.IntegerField()
-    time_create = serializers.DateTimeField(read_only=True)
-    user_id = serializers.IntegerField()
-    # user = serializers.CurrentUserDefault() ## (default=serializers.CurrentUserDefault)
 
 
-    def create(self, validated_data):
-        return File.objects.create(**validated_data)
+class FileInfoSerializer(serializers.Serializer):
+    name = serializers.CharField()
+    file_type = serializers.CharField()
+    size = serializers.IntegerField()
+    created_time = serializers.TimeField(format='%H:%M:%S')
+    modified_time = serializers.TimeField(format='%H:%M:%S')
 
-    def update(self, instance, validated_data):
-        instance.name = validated_data.get("name", instance.name)
-        instance.n = validated_data.get("n", instance.n)
-        instance.time_create = validated_data.get("time_create", instance.time_create)
-        instance.save()
-        return instance
+    def to_dict(self):
+        return self.data
 
-# def encode():
-#     model = FileModel('ttttttt', 8888)
-#     model_sr = FileSerializer(model)
-#     print(model_sr)
-#     print(model_sr.data)
-#     json = JSONRenderer().render(model_sr.data)
-#     print(json)
+# Пример данных
+# data = {
+#     'name': 'example',
+#     'file_typ': 'file',
+#     'size': 1024,
+#     'created_time': time(10, 30, 0),
+#     'modified_time': time(15, 45, 0),
+# }
 #
-#
-# def decode():
-#     stream = io.BytesIO(b'{"name":"ttttttt","n":8888}')
-#     data = JSONParser().parse(stream)
-#     print(data)
-#     serializer = FileSerializer(data=data)
-#     serializer.is_valid()
-#     print(serializer.validated_data)
+# serializer = FileSystemEntrySerializer(data=data)
+# serializer.is_valid()  # Проверка валидности данных
+
+# Преобразование в объект FileSystemEntry
+# entry = FileSystemEntry(**serializer.validated_data)

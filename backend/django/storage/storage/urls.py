@@ -17,13 +17,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include, re_path
 
-from drive.views import FileAPIView
+from drive.views import DriveAPIView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     # path('api/v1/drf-auth/', include('rest_framework.urls')),
-    path('api/v1/filelist', FileAPIView.as_view()),
-    path('api/v1/filelist/<int:pk>', FileAPIView.as_view()),
+    # path('api/v1/filelist', DriveAPIView.as_view()),
+    # path('api/v1/filelist/<int:pk>', DriveAPIView.as_view()),
     # path('api/v1/auth', include('djoser.urls')),
-    re_path(r'^auth/', include('djoser.urls.authtoken'))
+    re_path(r'^auth/', include('djoser.urls.authtoken')),
+    path('api/v1/drive', DriveAPIView.as_view()),
+    # path('api/v1/drive/download', DriveAPIView.as_view()),
+    # path('api/v1/drive', DriveAPIView.as_view()),
 ]
