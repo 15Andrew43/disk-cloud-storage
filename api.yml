@@ -24,6 +24,12 @@ paths:
           required: true
           schema:
             type: string
+        - name: operation
+          in: query
+          description: ls/download/open/share
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: List of files in the specified directory
@@ -90,75 +96,6 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         '403':
           $ref: "#/components/responses/InsufficientPermissions"
-        '404':
-          $ref: "#/components/responses/NotFound"
-
-  /api/v1/drive/download:
-    get:
-      tags:
-        - Drive
-      parameters:
-        - name: path
-          in: query
-          description: The path of the resource in the drive
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: file is successfully downloaded
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FileItem"
-        '401':
-          $ref: "#/components/responses/Unauthorized"
-        '404':
-          $ref: "#/components/responses/NotFound"
-
-  /api/v1/drive/open:
-    get:
-      tags:
-        - Drive
-      parameters:
-        - name: path
-          in: query
-          description: The path of the resource in the drive
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: file is successfully opened
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FileItem"
-        '401':
-          $ref: "#/components/responses/Unauthorized"
-        '404':
-          $ref: "#/components/responses/NotFound"
-
-  /api/v1/drive/share:
-    get:
-      tags:
-        - Drive
-      parameters:
-        - name: path
-          in: query
-          description: The path of the resource in the drive
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: file is successfully opened
-          content:
-            text/plain:
-              schema:
-                type: string
-        '401':
-          $ref: "#/components/responses/Unauthorized"
         '404':
           $ref: "#/components/responses/NotFound"
 
