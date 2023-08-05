@@ -37,6 +37,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/FileItems"
+        '400':
+          $ref: '#/components/responses/ParseError'
         '401':
           $ref: "#/components/responses/Unauthorized"
         '404':
@@ -51,9 +53,17 @@ paths:
           required: true
           schema:
             type: string
+        - name: type_file
+          in: query
+          description: file/dir
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: add successfully new file
+        '400':
+          $ref: '#/components/responses/ParseError'
         '401':
           $ref: "#/components/responses/Unauthorized"
         '404':
@@ -75,6 +85,8 @@ paths:
       responses:
         '200':
           description: file is successfully updated
+        '400':
+          $ref: '#/components/responses/ParseError'
         '401':
           $ref: "#/components/responses/Unauthorized"
         '404':
@@ -92,6 +104,8 @@ paths:
       responses:
         '200':
           description: Project is successfully deleted
+        '400':
+          $ref: '#/components/responses/ParseError'
         '401':
           $ref: "#/components/responses/Unauthorized"
         '403':
@@ -148,6 +162,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/FileItems"
+        '400':
+          $ref: '#/components/responses/ParseError'
 
   /api/v1/common/{generated_link}/download:
     get:
@@ -168,6 +184,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/FileItem"
+        '400':
+          $ref: '#/components/responses/ParseError'
         '404':
           $ref: "#/components/responses/NotFound"
 
@@ -190,6 +208,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/FileItem"
+        '400':
+          $ref: '#/components/responses/ParseError'
         '401':
           $ref: "#/components/responses/Unauthorized"
         '404':
@@ -229,6 +249,13 @@ components:
 
     InsufficientPermissions:
       description: Недостаточно прав
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    ParseError:
+      description: Нет необхоимого паметра
       content:
         application/json:
           schema:
