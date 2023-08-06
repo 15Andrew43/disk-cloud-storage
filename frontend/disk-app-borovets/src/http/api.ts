@@ -1,28 +1,22 @@
 import axios from 'axios';
-import {FileInfo} from '../redux/store';
+import { FileInfo } from '../redux/store';
 
-const API_URL = 'http://127.0.0.1:8000/api/v1'; // Замените на ваш URL API
-const HOSTNAME = 'http://127.0.0.1:8000';
-
-
-
-interface ApiResponse<T> {
-  data: T;
-}
+const API_URL = 'http://localhost:8000/api/v1';
+const HOSTNAME = 'http://localhost:8000';
 
 interface ErrorResponse {
   error: string;
 }
 
-export async function login(username: string, password: string): Promise<ApiResponse<string> | ErrorResponse> {
+export async function login(username: string, password: string): Promise<any | ErrorResponse> {
   try {
-    const response = await axios.post<ApiResponse<string>>(`${HOSTNAME}/auth/token/login/`, {
+    const response = await axios.post<any>(`${HOSTNAME}/auth/token/login/`, {
       username,
       password,
     });
-    const token = response.data.data;
 
-    // Сохраняем токен в локальном хранилище
+    const token = response.data.auth_token;
+
     localStorage.setItem('token', token);
 
     return response.data;
@@ -35,11 +29,15 @@ export async function login(username: string, password: string): Promise<ApiResp
   }
 }
 
-export async function logout(token: string): Promise<ApiResponse<string> | ErrorResponse> {
+export async function logout(): Promise<any | ErrorResponse> {
   try {
-    const response = await axios.post<ApiResponse<string>>(`${HOSTNAME}/auth/token/logout/`, {}, {
-      headers: { Authorization: `Token ${token}` },
+    const token = localStorage.getItem('token');
+    const headers = token ? { Authorization: `Token ${token}` } : {};
+
+    const response = await axios.post<any>(`${HOSTNAME}/auth/token/logout/`, null, {
+      headers,
     });
+
     localStorage.removeItem('token');
     return response.data;
   } catch (error: any) {
@@ -51,11 +49,14 @@ export async function logout(token: string): Promise<ApiResponse<string> | Error
   }
 }
 
-
-export async function listFiles(path: string, operation: string): Promise<ApiResponse<FileInfo[]> | ErrorResponse> {
+export async function listFiles(path: string, operation: string): Promise<any | ErrorResponse> {
   try {
-    const response = await axios.get<ApiResponse<FileInfo[]>>(`${API_URL}/drive`, {
+    const token = localStorage.getItem('token');
+    const headers = token ? { Authorization: `Token ${token}` } : {};
+
+    const response = await axios.get<any>(`${API_URL}/drive`, {
       params: { path, operation },
+      headers,
     });
     return response.data;
   } catch (error: any) {
@@ -67,14 +68,27 @@ export async function listFiles(path: string, operation: string): Promise<ApiRes
   }
 }
 
-export async function addFile(path: string, operation: string, fileData: { file_name: string, file_type: string }): Promise<ApiResponse<string> | ErrorResponse> {
+export async function addFile(
+  path: string,
+  operation: string,
+  fileData: { file_name: string; file_type: string }
+): Promise<any | ErrorResponse> {
   try {
-    const response = await axios.post<ApiResponse<string>>(`${API_URL}/drive`, {
-      path,
-      operation,
-      file_name: fileData.file_name,
-      file_type: fileData.file_type,
-    });
+    const token = localStorage.getItem('token');
+    const headers = token ? { Authorization: `Token ${token}` } : {};
+
+    const response = await axios.post<any>(
+      `${API_URL}/drive`,
+      {
+        path,
+        operation,
+        file_name: fileData.file_name,
+        file_type: fileData.file_type,
+      },
+      {
+        headers,
+      }
+    );
     return response.data;
   } catch (error: any) {
     if (error.response) {
@@ -85,14 +99,27 @@ export async function addFile(path: string, operation: string, fileData: { file_
   }
 }
 
-export async function updateFile(path: string, operation: string, updateData: { destination: string, data: string }): Promise<ApiResponse<string> | ErrorResponse> {
+export async function updateFile(
+  path: string,
+  operation: string,
+  updateData: { destination: string; data: string }
+): Promise<any | ErrorResponse> {
   try {
-    const response = await axios.put<ApiResponse<string>>(`${API_URL}/drive`, {
-      path,
-      operation,
-      destination: updateData.destination,
-      data: updateData.data,
-    });
+    const token = localStorage.getItem('token');
+    const headers = token ? { Authorization: `Token ${token}` } : {};
+
+    const response = await axios.put<any>(
+      `${API_URL}/drive`,
+      {
+        path,
+        operation,
+        destination: updateData.destination,
+        data: updateData.data,
+      },
+      {
+        headers,
+      }
+    );
     return response.data;
   } catch (error: any) {
     if (error.response) {
@@ -103,10 +130,14 @@ export async function updateFile(path: string, operation: string, updateData: { 
   }
 }
 
-export async function deleteFile(path: string): Promise<ApiResponse<string> | ErrorResponse> {
+export async function deleteFile(path: string): Promise<any | ErrorResponse> {
   try {
-    const response = await axios.delete<ApiResponse<string>>(`${API_URL}/drive`, {
+    const token = localStorage.getItem('token');
+    const headers = token ? { Authorization: `Token ${token}` } : {};
+
+    const response = await axios.delete<any>(`${API_URL}/drive`, {
       params: { path },
+      headers,
     });
     return response.data;
   } catch (error: any) {
@@ -117,3 +148,5 @@ export async function deleteFile(path: string): Promise<ApiResponse<string> | Er
     }
   }
 }
+
+export default axios;

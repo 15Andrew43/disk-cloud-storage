@@ -11,13 +11,28 @@ import Authorization from "./sites/Authorization"; // Импортируйте �
 
 function App() {
   // Проверяем наличие токена в локальном хранилище
-  const isAuthenticated = !!localStorage.getItem('token');
+  var isAuthenticated = false;
+    if (localStorage.getItem('token') && localStorage.getItem('token') !== 'undefined') {
+        isAuthenticated = true;
+    }
+
+  console.log(isAuthenticated, localStorage.getItem('token'));
+
+
+      // const navigate = useNavigate();
+
+  // Если не аутентифицирован, перенаправляем на страницу авторизации
+  // if (!isAuthenticated) {
+  //   navigate('/auth');
+  // }
+
 
   return (
     <Router>
       <div className={`background-style`}>
-        {isAuthenticated ? (
-          <>
+          {isAuthenticated
+              ?
+              <>
             <div className={`header-style`}><Header /></div>
             <div className={`leftbar_body-style`}>
               <div className={`leftbar-style`}>
@@ -30,13 +45,16 @@ function App() {
                       {/*<Route path="/media" component={MediaComponent} />*/}
                       {/*<Route path="/trash" component={TrashComponent} />*/}
                       {/*<Redirect to="/fs" />*/}
+                      {/*<Route path="/auth" element={<Authorization/>} />*/}
+                    {/*{isAuthenticated ? null : <Navigate to="/auth" />} /!* Перенаправляем на страницу авторизации *!/*/}
                   </Routes>
               </div>
             </div>
           </>
-        ) : (
-          <Authorization />
-        )}
+              :
+              <Authorization/>
+          }
+
       </div>
     </Router>
   );

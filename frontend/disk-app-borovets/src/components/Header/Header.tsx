@@ -9,6 +9,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { Col, Row } from "react-bootstrap";
 import style from "../Body/Body.module.css";
+import {logout} from "../../http/api";
 
 
 // className={`d-flex ${style.my_style}`}
@@ -40,7 +41,7 @@ function Header() {
                             Настройки
                         </NavDropdown.Item>
                         <NavDropdown.Divider />
-                        <NavDropdown.Item href="#action5">
+                        <NavDropdown.Item onClick={logout}>
                             Выйти
                         </NavDropdown.Item>
                     </NavDropdown>
