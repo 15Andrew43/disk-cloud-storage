@@ -7,12 +7,25 @@ import Form from 'react-bootstrap/Form';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
+import Dropdown from 'react-bootstrap/Dropdown';
+import DropdownButton from 'react-bootstrap/DropdownButton';
+import ModalDiv from "../Other/ModalDiv";
+
 
 import style from './LeftBar.module.css'
 function LeftBar() {
     return (
         <div className={`${style.container}`}>
-            <Button variant="outline-success" className={style.createButton}>Создать</Button>
+            {/*<Button variant="outline-success" className={style.createButton}>Создать</Button>*/}
+            <DropdownButton className={`${style.createButton}`} id="dropdown-item-button" title="Создать">
+                {/*<Dropdown.ItemText>Dropdown item text</Dropdown.ItemText>*/}
+                {/*<Dropdown.Item as="button">Action</Dropdown.Item>*/}
+
+                <ModalDiv isFolder={false} /> {/* Создание файла */}
+                <ModalDiv isFolder={true} /> {/* Создание папки */}
+                <Form.Control type="file" multiple />
+
+            </DropdownButton>
             <div className={`${style.navigation}`}>
                 <Nav.Link href="#action1">Мой диск</Nav.Link>
                 <Nav.Link href="#action2">Общие файлы</Nav.Link>

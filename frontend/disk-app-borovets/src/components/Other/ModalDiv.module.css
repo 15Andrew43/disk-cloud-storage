@@ -1,0 +1,13 @@
+/* Стили для кастомной кнопки без фона и границы */
+.customButton {
+    background-color: transparent;
+    border: none;
+    color: black; /* Цвет текста кнопки */
+}
+
+/* Стили для когда кнопка находится в состоянии наведения */
+.customButton:hover {
+    background-color: transparent; /* Цвет фона кнопки при наведении */
+    border: none; /* Убираем границу при наведении */
+    color: green; /* Например, изменяем цвет текста кнопки при наведении */
+}

@@ -28,7 +28,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 
 function Body() {
     return (
-        <div className={`${style.container}`}>
+        <div className={`${style.mainbody}`}>
             <h4 className={`${style.path}`}>
             <Breadcrumb>
                 <Breadcrumb.Item href="#">Мой диск</Breadcrumb.Item>
@@ -74,7 +74,7 @@ function Body() {
                 <div></div> {/*мне похуй, я ничего лучше не придумал, чем пустой div, чтобы все сдвинулось влево*/}
 
             </div>
-            <div className={`${style.files} ${style.DivToScroll} ${style.DivWithScroll}`}>
+            <div className={`${style.DivToScroll} ${style.DivWithScroll}`}>
 
                 <FileList files={filesData} />
 

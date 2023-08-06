@@ -1,6 +1,5 @@
-.container {
-    /*display: flex;*/
-    /*flex-direction: column;*/
+.mainbody{
+
 }
 
 .path {
@@ -69,7 +68,7 @@
     /*overflow:scroll;*/
     /*overflow-x:hidden;*/
     /*flex-grow: 1;*/
-    height: 65vh; /* Изменено на 80vh или другое значение в зависимости от вашего предпочтения */
+    height: 65vh;
     overflow: auto; /* Изменено на auto */
     flex-grow: 1;
 
