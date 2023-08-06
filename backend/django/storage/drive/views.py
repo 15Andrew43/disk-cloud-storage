@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticate
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import File, FileInfo
+from .models import FileInfo
 from .serializers import FileInfoSerializer
 from rest_framework import serializers
 

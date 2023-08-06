@@ -13,8 +13,8 @@ import Breadcrumb from 'react-bootstrap/Breadcrumb';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import FileList from "/Users/nikolayborovets/Desktop/FALT_MIPT/inf/extracurricular/disk-cloud-storage/frontend/disk-app-borovets/src/components/Other/FileList";
-import filesData from "/Users/nikolayborovets/Desktop/FALT_MIPT/inf/extracurricular/disk-cloud-storage/frontend/disk-app-borovets/src/components/Other/filesData";
+import FileList from "../Other/FileList";
+import filesData from "../Other/filesData";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 

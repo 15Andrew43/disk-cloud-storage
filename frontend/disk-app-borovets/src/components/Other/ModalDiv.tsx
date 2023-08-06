@@ -14,6 +14,9 @@ function ModalDiv({ isFolder }: ModalDivProps) {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
+    const [fileName, setFileName] = useState('');
+    const [fileContent, setFileContent] = useState('');
+
     return (
         <>
             <Button className={`${style.customButton}`} variant="primary" onClick={handleShow}>
@@ -28,12 +31,19 @@ function ModalDiv({ isFolder }: ModalDivProps) {
                     <Form>
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                             <Form.Label>{isFolder ? 'Название папки' : 'Название файла'}</Form.Label>
-                            <Form.Control />
+                            <Form.Control as="textarea"
+                                          value={fileName}
+                                          onChange={e => setFileName(e.target.value)}
+                            />
                         </Form.Group>
                         {!isFolder && (
                             <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
                                 <Form.Label>Содержимое файла</Form.Label>
-                                <Form.Control as="textarea" rows={3} />
+                                <Form.Control as="textarea"
+                                              rows={3}
+                                              value={fileContent}
+                                              onChange={e => setFileContent(e.target.value)}
+                                />
                             </Form.Group>
                         )}
                     </Form>
