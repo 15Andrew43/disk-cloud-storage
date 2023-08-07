@@ -10,11 +10,13 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 import { Col, Row } from "react-bootstrap";
 import style from "../Body/Body.module.css";
 import {logout} from "../../http/api";
+import {useSelector} from "react-redux";
 
 
 // className={`d-flex ${style.my_style}`}
 
 function Header() {
+    // const isAuth = useSelector( state => state.is)
     return (
         <Navbar expand="lg" className="">
             <Container fluid>

@@ -1,7 +1,7 @@
 import {combineReducers, createStore} from 'redux';
 
 // Действия
-// const SET_TOKEN = 'SET_TOKEN';
+const SET_IS_AUTH = 'SET_IS_AUTH';
 const SET_USERNAME = 'SET_USERNAME';
 const SET_CUR_PATH = 'SET_CUR_PATH';
 const PUSH_TO_CUR_PATH = 'PUSH_TO_CUR_PATH';
@@ -9,10 +9,10 @@ const POP_FROM_CUR_PATH = 'POP_FROM_CUR_PATH';
 const SET_FILE_LIST = 'SET_FILE_LIST';
 
 // Создание действий
-// export const setToken = (token: string) => ({
-//   type: SET_TOKEN,
-//   payload: token,
-// });
+export const setIsAuth = (isAuth: boolean) => ({
+  type: SET_IS_AUTH,
+  payload: isAuth,
+});
 
 export const setUsername = (username: string) => ({
   type: SET_USERNAME,
@@ -48,7 +48,7 @@ export interface FileInfo {
 }
 
 interface AppState {
-  // token: string,
+  is_auth: boolean,
   username: string,
   cur_path: string[],
   file_list: FileInfo[]
@@ -56,7 +56,7 @@ interface AppState {
 
 // Инициальное состояние
 const initialState: AppState = {
-  // token: '',
+  is_auth: false,
   username: '',
   cur_path: [],
   file_list: []
@@ -65,8 +65,8 @@ const initialState: AppState = {
 // Редьюсер
 const appReducer = (state: AppState = initialState, action: any) => {
   switch (action.type) {
-    // case SET_TOKEN:
-    //   return { ...state, token: action.payload };
+    case SET_IS_AUTH:
+      return { ...state, is_auth: action.payload };
     case SET_USERNAME:
       return { ...state, username: action.payload };
     case SET_CUR_PATH:
