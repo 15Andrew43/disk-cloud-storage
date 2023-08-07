@@ -62,11 +62,19 @@ export async function listFiles(path: string, operation: string): Promise<any | 
     console.log("\n\n\n");
     console.log("uuuuuuuuu");
     console.log(response);
-    return response.data.files;
+    // if (operation === 'ls') {
+    //   return response.data.files;
+      return response;
+    // } else if (operation === 'download') {
+    //   return response.data;
+    // } else {
+    //   ;
+    // }
   } catch (error: any) {
     console.log('pppppppppppppp');
     if (error.response) {
-      return { error: error.response.data.detail };
+      // return { error: error.response.data.detail };
+      return { error: error };
     } else {
       return { error: 'An error occurred' };
     }

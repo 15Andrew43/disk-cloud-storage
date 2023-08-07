@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 
+# import logging
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -150,3 +152,30 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Пример: адрес вашего фронтенд-приложения
     # Добавьте другие допустимые источники по мере необходимости
 ]
+
+# settings.py
+
+
+# Конфигурация логгера
+# logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+# Ваш код настройки Django и DRF
+# settings.py
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'http_logfile': {
+#             'level': 'DEBUG',
+#             'class': 'logging.FileHandler',
+#             'filename': 'http_requests.log',  # Имя файла для записи логов HTTP-запросов
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['http_logfile'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#     },
+# }

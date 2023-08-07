@@ -22,9 +22,9 @@ import {Dispatch} from "redux";
 export const fetchData = async (cur_path_arr: string[], dispatch: Dispatch) => {
             try {
                 const rp = await listFiles(cur_path_arr.join(''), 'ls');
-                dispatch(setFileList(rp));
-                console.log("bruh");
                 console.log(rp);
+                dispatch(setFileList(rp.data.files));
+                console.log("bruh");
             } catch (error) {
                 console.error("Error fetching data:", error);
             }

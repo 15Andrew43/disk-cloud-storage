@@ -1,7 +1,10 @@
 import time
 from pathlib import Path
 
+from django.http import FileResponse
 from django.core.exceptions import SuspiciousOperation
+from django.http import HttpResponse
+
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.exceptions import ParseError, NotFound, ValidationError, PermissionDenied
@@ -81,7 +84,20 @@ class DriveAPIView(APIView):
             serializer = FileInfoSerializer(files_list, many=True)
             return Response({'files': serializer.data})
         elif operation == 'download':
-            pass
+            try:
+                print("bababababab")
+                # with open(filename, 'rb') as file:
+                #     response = HttpResponse(file.read(), content_type='application/octet-stream')
+                #     response['Content-Disposition'] = f'attachment; filename="{filename}"'
+                #     return response
+                file = open(full_path, 'rb')
+                response = FileResponse(file)
+                return response
+            except FileNotFoundError:
+                return Response({'detail': 'File not found'}, status=status.HTTP_404_NOT_FOUND)
+            except Exception as e:
+                print(e)
+                return Response({'detail': 'Error downloading file'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         elif operation == 'open':
             pass
         elif operation == 'share':

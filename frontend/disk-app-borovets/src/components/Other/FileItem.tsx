@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 
 import style from './FileItem.module.css';
-import {deleteFile} from "../../http/api";
+import {deleteFile, listFiles} from "../../http/api";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchData} from "../../pages/Body/Body";
 import {popFromCurPath, pushToCurPath, setCurPath} from "../../redux/store";
@@ -63,6 +63,27 @@ function FileItem({  name, fileType, owner, modifiedTime, size }: FileItemProps)
 
     }
 
+    async function handleDownload() {
+        try {
+            const response = await listFiles(cur_path_arr.join('') + name + '/', 'download');
+            const blob = new Blob([response.data], { type: response.headers['content-type'] });
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = name; // Здесь можно указать имя файла
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // Освобождаем ресурсы
+            URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Error downloading file:', error);
+        }
+    }
+
+
     return (
         <>
             <div className={style.fileItem}
@@ -86,7 +107,12 @@ function FileItem({  name, fileType, owner, modifiedTime, size }: FileItemProps)
                     <Button variant="primary" onClick={() => console.log('Открыть')}>
                         Открыть
                     </Button>
-                    <Button variant="primary" onClick={() => console.log('Скачать')}>
+                    <Button variant="primary"
+                            onClick={() => {
+                                handleDownload();
+                                console.log('Скачать');
+                            }
+                    }>
                         Скачать
                     </Button>
                     <Button variant="primary" onClick={() => console.log('Переименовать')}>
@@ -105,9 +131,6 @@ function FileItem({  name, fileType, owner, modifiedTime, size }: FileItemProps)
         </>
     );
 }
-
-
-
 
 
 function getFileExtension(fileName: string, fileType: string): string {
