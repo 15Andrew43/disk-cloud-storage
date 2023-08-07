@@ -3,6 +3,9 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import style from './ModalDiv.module.css';
+import {addFile} from "../../http/api";
+import {useDispatch, useSelector} from "react-redux";
+import {fetchData} from "../../pages/Body/Body";
 
 interface ModalDivProps {
     isFolder: boolean;
@@ -10,8 +13,27 @@ interface ModalDivProps {
 
 function ModalDiv({ isFolder }: ModalDivProps) {
     const [show, setShow] = useState(false);
+    const dispatch = useDispatch();
 
-    const handleClose = () => setShow(false);
+    const cur_path_arr: any = useSelector<any>((state) => {
+        console.log("body1111!");
+        console.log(state);
+        console.log(localStorage.getItem('token'));
+        // console.log("\n\n\n");
+        // console.log(typeof state.app.cur_path);
+        // console.log("\n\n\n");
+        return state.app.cur_path;
+    });
+
+    const handleClose = () => {
+        if (isFolder) {
+            addFile(cur_path_arr.join(''), 'create', {file_name: fileName, file_type: 'Directory', file_content: ''});
+        } else {
+            addFile(cur_path_arr.join(''), 'create', {file_name: fileName, file_type: 'File', file_content: fileContent});
+        }
+        fetchData(cur_path_arr, dispatch);
+        setShow(false);
+    };
     const handleShow = () => setShow(true);
 
     const [fileName, setFileName] = useState('');

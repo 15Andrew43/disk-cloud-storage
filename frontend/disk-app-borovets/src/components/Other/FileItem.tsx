@@ -22,7 +22,7 @@ interface FileItemProps {
     name: string;
     owner: string;
     modifiedTime: string;
-    size: string;
+    size: number;
 }
 
 // function FileItem({ name, owner, modifiedTime, size }: FileItemProps) {

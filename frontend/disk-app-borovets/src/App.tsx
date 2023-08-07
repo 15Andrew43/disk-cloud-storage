@@ -20,13 +20,6 @@ function App() {
         handleLogin(dispatch, navigate);
     }, [])
 
-  const isAuth = useSelector<any>((state) => {
-      console.log("App!");
-          console.log(state);
-          console.log();
-          return state.app.is_auth;
-      });
-
 
   return (
 

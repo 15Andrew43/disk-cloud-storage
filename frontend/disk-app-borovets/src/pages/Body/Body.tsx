@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import logo from './logo.svg';
 // import './App.css';
 import Button from 'react-bootstrap/Button';
@@ -21,12 +21,52 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import style from './Body.module.css'
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import {handleLogin} from "../Authorization";
+import {listFiles} from "../../http/api";
+import {useDispatch, useSelector} from "react-redux";
+import {FileInfo, setFileList} from "../../redux/store";
+import {Dispatch} from "redux";
 
 
 
+export const fetchData = async (cur_path_arr: string[], dispatch: Dispatch) => {
+            try {
+                const rp = await listFiles(cur_path_arr.join(''), 'ls');
+                dispatch(setFileList(rp));
+                console.log("bruh");
+                console.log(rp);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
 
 
 function Body() {
+    const dispatch = useDispatch();
+
+    const cur_path_arr: any = useSelector<any>((state) => {
+        console.log("body1111!");
+        console.log(state);
+        console.log(localStorage.getItem('token'));
+        // console.log("\n\n\n");
+        // console.log(typeof state.app.cur_path);
+        // console.log("\n\n\n");
+        return state.app.cur_path;
+    });
+
+    const file_list: any = useSelector<any>((state) => {
+        console.log("body2222!");
+        console.log(state);
+        console.log(localStorage.getItem('token'));
+        return state.app.file_list;
+    });
+
+    useEffect(() => {
+        console.log('yyyyyyyyyy');
+
+        fetchData(cur_path_arr, dispatch);
+    }, [cur_path_arr]);
+
     return (
         <div className={`${style.mainbody}`}>
             <h4 className={`${style.path}`}>
@@ -76,7 +116,7 @@ function Body() {
             </div>
             <div className={`${style.DivToScroll} ${style.DivWithScroll}`}>
 
-                <FileList files={filesData} />
+                <FileList files={file_list} />
 
             </div>
         </div>

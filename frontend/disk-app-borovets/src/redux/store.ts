@@ -58,7 +58,7 @@ interface AppState {
 const initialState: AppState = {
   is_auth: false,
   username: '',
-  cur_path: [],
+  cur_path: ['./'],
   file_list: []
 };
 

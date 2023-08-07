@@ -74,6 +74,9 @@ paths:
                   type: string
                   enum: ['File', 'Directory']
                   description: Type of the file (File or Directory)
+                data:
+                  type: string
+                  description: file content
       responses:
         '200':
           description: add successfully new file

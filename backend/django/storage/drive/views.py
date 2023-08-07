@@ -122,7 +122,7 @@ class DriveAPIView(APIView):
                 new_file_path.mkdir()
             elif file_type == 'File':
                 with new_file_path.open(mode='w') as file:
-                    data = request.data.get('data')
+                    data = request.data.get('file_content')
                     if data:
                         file.write(data)
             else:

@@ -58,8 +58,13 @@ export async function listFiles(path: string, operation: string): Promise<any | 
       params: { path, operation },
       headers,
     });
-    return response.data;
+
+    console.log("\n\n\n");
+    console.log("uuuuuuuuu");
+    console.log(response);
+    return response.data.files;
   } catch (error: any) {
+    console.log('pppppppppppppp');
     if (error.response) {
       return { error: error.response.data.detail };
     } else {
@@ -71,7 +76,7 @@ export async function listFiles(path: string, operation: string): Promise<any | 
 export async function addFile(
   path: string,
   operation: string,
-  fileData: { file_name: string; file_type: string }
+  fileData: { file_name: string; file_type: string, file_content: string }
 ): Promise<any | ErrorResponse> {
   try {
     const token = localStorage.getItem('token');
@@ -80,12 +85,12 @@ export async function addFile(
     const response = await axios.post<any>(
       `${API_URL}/drive`,
       {
-        path,
-        operation,
         file_name: fileData.file_name,
         file_type: fileData.file_type,
+        file_content: fileData.file_content
       },
       {
+        params: { path, operation },
         headers,
       }
     );

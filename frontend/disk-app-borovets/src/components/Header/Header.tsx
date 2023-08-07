@@ -10,7 +10,6 @@ import {useNavigate} from "react-router-dom";
 
 
 
-// className={`d-flex ${style.my_style}`}
 
 function Header() {
     const navigate = useNavigate();

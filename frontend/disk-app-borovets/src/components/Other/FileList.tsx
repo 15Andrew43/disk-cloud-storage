@@ -10,18 +10,19 @@ import FileItem from "./FileItem";
 
 
 import style from './FileList.module.css'
+import {FileInfo} from "../../redux/store";
 
 
 
-interface File {
-    name: string;
-    owner: string;
-    modifiedTime: string;
-    size: string;
-}
+// interface File {
+//     name: string;
+//     owner: string;
+//     modifiedTime: string;
+//     size: string;
+// }
 
 interface FileListProps {
-    files: File[];
+    files: FileInfo[];
 }
 
 function FileList(props: FileListProps) {
@@ -33,8 +34,8 @@ function FileList(props: FileListProps) {
                 <FileItem
                     key={index}
                     name={file.name}
-                    owner={file.owner}
-                    modifiedTime={file.modifiedTime}
+                    owner={"root"}
+                    modifiedTime={file.modified_time}
                     size={file.size}
                 />
             ))}
