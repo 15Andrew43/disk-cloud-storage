@@ -8,6 +8,7 @@ import style from './FileItem.module.css';
 import {deleteFile} from "../../http/api";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchData} from "../../pages/Body/Body";
+import {popFromCurPath, pushToCurPath, setCurPath} from "../../redux/store";
 
 
 
@@ -48,9 +49,26 @@ function FileItem({  name, fileType, owner, modifiedTime, size }: FileItemProps)
     }
 
 
+    function handleDoubleClick() {
+        // let new_path = [...cur_path_arr, name+'/'];
+        if (fileType === 'Directory') {
+            if (name === '..') {
+                dispatch(popFromCurPath());
+            } else {
+                dispatch(pushToCurPath(name + '/'));
+            }
+        } else { // fileType === 'File'
+            ;
+        }
+
+    }
+
     return (
         <>
-            <div className={style.fileItem} onContextMenu={(e) => handleContextMenu(e)}>
+            <div className={style.fileItem}
+                 onContextMenu={(e) => handleContextMenu(e)}
+                 onDoubleClick={handleDoubleClick}
+            >
                 <i className={iconClassName}></i>
                 <div className={style.fileName}>{name}</div>
                 <div className={style.owner}>{owner}</div>
