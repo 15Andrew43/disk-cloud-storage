@@ -16,21 +16,17 @@ function ModalDiv({ isFolder }: ModalDivProps) {
     const dispatch = useDispatch();
 
     const cur_path_arr: any = useSelector<any>((state) => {
-        console.log("body1111!");
-        console.log(state);
-        console.log(localStorage.getItem('token'));
-        // console.log("\n\n\n");
-        // console.log(typeof state.app.cur_path);
-        // console.log("\n\n\n");
         return state.app.cur_path;
     });
 
-    const handleClose = () => {
+    const handleClose = async () => {
         if (isFolder) {
-            addFile(cur_path_arr.join(''), 'create', {file_name: fileName, file_type: 'Directory', file_content: ''});
+            await addFile(cur_path_arr.join(''), 'create', {file_name: fileName, file_type: 'Directory', file_content: ''});
         } else {
-            addFile(cur_path_arr.join(''), 'create', {file_name: fileName, file_type: 'File', file_content: fileContent});
+            await addFile(cur_path_arr.join(''), 'create', {file_name: fileName, file_type: 'File', file_content: fileContent});
         }
+        setFileName('');
+        setFileContent('');
         fetchData(cur_path_arr, dispatch);
         setShow(false);
     };

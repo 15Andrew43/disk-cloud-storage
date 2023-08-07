@@ -1,20 +1,13 @@
 import React from 'react';
 import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
-import Form from 'react-bootstrap/Form';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
 import Modal from 'react-bootstrap/Modal';
 import { useState } from 'react';
-import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 
-
-
-
-// import style from './FileItem.module.css'
 
 import style from './FileItem.module.css';
+import {deleteFile} from "../../http/api";
+import {useDispatch, useSelector} from "react-redux";
+import {fetchData} from "../../pages/Body/Body";
 
 
 
@@ -25,25 +18,10 @@ interface FileItemProps {
     size: number;
 }
 
-// function FileItem({ name, owner, modifiedTime, size }: FileItemProps) {
-//     const fileType = getFileType(name);
-//     const iconClassName = getFileIconClassName(fileType);
-//
-//     return (
-//         <div className={style.fileItem}>
-//             <i className={iconClassName}></i>
-//             <div className={style.fileName}>{name}</div>
-//             <div className={style.owner}>{owner}</div>
-//             <div className={style.modifiedTime}>{modifiedTime}</div>
-//             <div className={style.size}>{size}</div>
-//         </div>
-//     );
-// }
-
-
-
 
 function FileItem({ name, owner, modifiedTime, size }: FileItemProps) {
+    const dispatch = useDispatch();
+
     const fileType = getFileType(name);
     const iconClassName = getFileIconClassName(fileType);
 
@@ -54,9 +32,19 @@ function FileItem({ name, owner, modifiedTime, size }: FileItemProps) {
         setShowModal(true);
     };
 
+    const cur_path_arr: any = useSelector<any>((state) => {
+        return state.app.cur_path;
+    });
+
+    const handleDelete = async () => {
+        await deleteFile(cur_path_arr.join('') + name + '/');
+        fetchData(cur_path_arr, dispatch);
+    }
+
+
     return (
         <>
-            <div className={style.fileItem} onContextMenu={handleContextMenu}>
+            <div className={style.fileItem} onContextMenu={(e) => handleContextMenu(e)}>
                 <i className={iconClassName}></i>
                 <div className={style.fileName}>{name}</div>
                 <div className={style.owner}>{owner}</div>
@@ -80,7 +68,12 @@ function FileItem({ name, owner, modifiedTime, size }: FileItemProps) {
                     <Button variant="primary" onClick={() => console.log('Переименовать')}>
                         Переименовать
                     </Button>
-                    <Button variant="danger" onClick={() => console.log('Удалить')}>
+                    <Button variant="danger"
+                            onClick={() => {
+                                handleDelete();
+                                setShowModal(false);
+                                console.log('Удалить');
+                            }}>
                         Удалить
                     </Button>
                 </Modal.Body>
