@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { FileInfo } from '../redux/store';
 
-const API_URL = 'http://localhost:8000/api/v1';
+export const API_URL = 'http://localhost:8000/api/v1';
 const HOSTNAME = 'http://localhost:8000';
 
 interface ErrorResponse {
@@ -76,25 +76,46 @@ export async function listFiles(path: string, operation: string): Promise<any | 
 export async function addFile(
   path: string,
   operation: string,
-  fileData: { file_name: string; file_type: string, file_content: string }
+  fileData: { file_name: string; file_type: string, file_content: string } | any
 ): Promise<any | ErrorResponse> {
   try {
     const token = localStorage.getItem('token');
     const headers = token ? { Authorization: `Token ${token}` } : {};
 
-    const response = await axios.post<any>(
+    if (operation === 'create') {
+      const response = await axios.post<any>(
+        `${API_URL}/drive`,
+        {
+          file_name: fileData.file_name,
+          file_type: fileData.file_type,
+          file_content: fileData.file_content
+        },
+        {
+          params: { path, operation },
+          headers,
+        }
+      );
+      return response.data;
+    } else if (operation === 'upload') {
+      const formData = new FormData();
+      formData.append('file', fileData);
+
+      const response = await axios.post<any>(
       `${API_URL}/drive`,
+          formData,
       {
-        file_name: fileData.file_name,
-        file_type: fileData.file_type,
-        file_content: fileData.file_content
-      },
-      {
-        params: { path, operation },
-        headers,
+        params: { path, operation: 'upload' },
+        headers: {
+          ...headers,
+          'Content-Type': 'multipart/form-data', // Важно установить правильный Content-Type для загрузки файлов
+        },
       }
     );
     return response.data;
+    } else {
+      alert('wrong operation in post!!!');
+    }
+
   } catch (error: any) {
     if (error.response) {
       return { error: error.response.data.detail };
@@ -103,6 +124,23 @@ export async function addFile(
     }
   }
 }
+
+///////////////////////////////////////////////////////////////
+async function uploadFile(path: string, selectedFile: File): Promise<any> {
+  try {
+    const token = localStorage.getItem('token');
+    const headers = token ? { Authorization: `Token ${token}` } : {};
+
+
+  } catch (error: any) {
+    if (error.response) {
+      return { error: error.response.data.detail };
+    } else {
+      return { error: 'An error occurred' };
+    }
+  }
+}
+//////////////////////////////////////////////////////////////
 
 export async function updateFile(
   path: string,

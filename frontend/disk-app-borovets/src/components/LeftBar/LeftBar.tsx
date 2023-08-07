@@ -1,19 +1,58 @@
 import React from 'react';
-import logo from './logo.svg';
-// import './App.css';
-import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
-import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import ModalDiv from "../Other/ModalDiv";
 
 
 import style from './LeftBar.module.css'
+import {addFile, API_URL} from "../../http/api";
+import axios from "axios";
+import {useDispatch, useSelector} from "react-redux";
+import {fetchData} from "../../pages/Body/Body";
 function LeftBar() {
+    const dispatch = useDispatch();
+
+    const cur_path_arr: any = useSelector<any>((state) => {
+        return state.app.cur_path;
+    });
+
+    async function handleFileChange(event: any) {
+      const selectedFile = event.target.files[0];
+      console.log("selecteed file", selectedFile);
+
+      if (selectedFile) {
+        const fileName = selectedFile.name;
+        const fileType = selectedFile.type;
+        const fileSize = selectedFile.size;
+
+        console.log('File Name:', fileName);
+        console.log('File Type:', fileType);
+        console.log('File Size:', fileSize, 'bytes');
+
+        const reader = new FileReader();
+        reader.onload = function (event: any) {
+          const fileContent = event.target.result; // Содержимое файла в формате Data URL
+          console.log('File Content:', fileContent);
+        };
+        reader.readAsDataURL(selectedFile);
+      }
+
+      ///////////////////////////////////////////////////////////////////////////////////
+
+
+        var r = await addFile(cur_path_arr.join(''), 'upload', selectedFile);
+
+        console.log("response", r);
+
+        fetchData(cur_path_arr, dispatch);
+
+
+      //////////////////////////////////////////////////////////////////////////////////
+
+    }
+
+
     return (
         <div className={`${style.container}`}>
             {/*<Button variant="outline-success" className={style.createButton}>Создать</Button>*/}
@@ -23,7 +62,11 @@ function LeftBar() {
 
                 <ModalDiv isFolder={false} /> {/* Создание файла */}
                 <ModalDiv isFolder={true} /> {/* Создание папки */}
-                <Form.Control type="file" multiple />
+                <Form.Control
+                    type="file"
+                    multiple
+                    onChange={handleFileChange}
+                />
 
             </DropdownButton>
             <div className={`${style.navigation}`}>

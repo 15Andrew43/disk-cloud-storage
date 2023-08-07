@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import FileInfo
-from .serializers import FileInfoSerializer
+from .serializers import FileInfoSerializer, FileUploadSerializer
 from rest_framework import serializers
 
 from decouple import config
@@ -128,7 +128,22 @@ class DriveAPIView(APIView):
             else:
                 return Response({"error": 'Неправильный ключ "file_type" передан'}, status=status.HTTP_400_BAD_REQUEST)
         elif operation == 'upload':
-            pass
+            serializer = FileUploadSerializer(data=request.data)
+            if serializer.is_valid():
+                file = serializer.validated_data['file']
+                file_name = file.name
+                file_content = file.read()  # Содержимое файла (байтовая строка)
+
+                upload_path = full_path / file_name
+
+                try:
+                    # Открываем файл для записи и записываем содержимое
+                    with open(upload_path, 'wb') as destination:
+                        destination.write(file_content)
+                    return Response({'detail': 'File uploaded successfully'}, status=status.HTTP_201_CREATED)
+                except Exception as e:
+                    return Response({'detail': 'Error uploading file'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({"error": 'Неправильный параметр "operation"'}, status=status.HTTP_400_BAD_REQUEST)
 
