@@ -18,6 +18,7 @@ function FileList(props: FileListProps) {
                 <FileItem
                     key={index}
                     name={file.name}
+                    fileType={file.file_type}
                     owner={"root"}
                     modifiedTime={file.modified_time}
                     size={file.size}

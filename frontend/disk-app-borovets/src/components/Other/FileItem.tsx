@@ -13,17 +13,23 @@ import {fetchData} from "../../pages/Body/Body";
 
 interface FileItemProps {
     name: string;
+    fileType: string,
     owner: string;
     modifiedTime: string;
     size: number;
 }
 
 
-function FileItem({ name, owner, modifiedTime, size }: FileItemProps) {
+function FileItem({  name, fileType, owner, modifiedTime, size }: FileItemProps) {
     const dispatch = useDispatch();
 
-    const fileType = getFileType(name);
-    const iconClassName = getFileIconClassName(fileType);
+    if (fileType === 'Directory') {
+        var iconClassName = 'bi bi-folder-fill';
+    } else { // fileType === 'File'
+        var fileExtension = getFileExtension(name, fileType);
+        var iconClassName = getFileIconClassName(fileExtension);
+    }
+
 
     const [showModal, setShowModal] = useState(false);
 
@@ -86,7 +92,7 @@ function FileItem({ name, owner, modifiedTime, size }: FileItemProps) {
 
 
 
-function getFileType(fileName: string): string {
+function getFileExtension(fileName: string, fileType: string): string {
     const fileExtension = fileName.split('.').pop();
     return fileExtension ? fileExtension.toLowerCase() : '';
 }
