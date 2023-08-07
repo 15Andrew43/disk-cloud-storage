@@ -1,33 +1,38 @@
 import React, { useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import {login} from "../http/api";
-import {setIsAuth} from "../redux/store";
-import {useDispatch} from "react-redux";
-import {useNavigate} from "react-router-dom";
+import { login } from "../http/api";
+import { setIsAuth } from "../redux/store";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import {Dispatch} from "redux";
+
+export function handleLogin(dispatch: Dispatch, navigate: ReturnType<typeof useNavigate>): void {
+  let token = localStorage.getItem('token');
+  console.log("token", token);
+
+  if (!!token && token !== 'undefined') {
+    dispatch(setIsAuth(true));
+    navigate('/fs');
+  } else {
+    dispatch(setIsAuth(false));
+    navigate('/auth');
+  }
+}
 
 function Authorization() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-    const dispatch = useDispatch();
-      const navigate = useNavigate();
-
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     await login(username, password); // Вызываем функцию login с параметрами
-    let token = localStorage.getItem('token');
-    console.log("token", token);
-        if (!!token && token !== 'undefined') {
-          dispatch(setIsAuth(true));
-            navigate('/fs');
-        } else {
-            dispatch(setIsAuth(false));
-            navigate('/auth');
-        }
-        setUsername('');
-        setPassword('');
+    handleLogin(dispatch, navigate);
+    setUsername('');
+    setPassword('');
   };
 
   return (

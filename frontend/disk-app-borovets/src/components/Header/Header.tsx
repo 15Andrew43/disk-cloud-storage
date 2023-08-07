@@ -1,22 +1,20 @@
 import React from 'react';
-// import logo from './logo.svg';
-// import './App.css';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
-import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-import { Col, Row } from "react-bootstrap";
-import style from "../../pages/Body/Body.module.css";
 import {logout} from "../../http/api";
 import { useSelector } from 'react-redux';
+import {useNavigate} from "react-router-dom";
 
 
 
 // className={`d-flex ${style.my_style}`}
 
 function Header() {
+    const navigate = useNavigate();
+
       const isAuth = useSelector<any>((state) => {
           console.log("Header!");
           console.log(state);
@@ -25,13 +23,15 @@ function Header() {
       });
 
 
+    function handleExit() {
+        logout();
+        navigate('/auth');
+    }
+
     return (
         <Navbar expand="lg" className="">
             <Container fluid>
-            {/*<Container className={`${style.headerdivs}`}>*/}
-
                 <div><Navbar.Brand href="#"><b>Диск</b></Navbar.Brand></div>
-
                 <div>
                     <Form className="d-flex" style={{width: "50vw"}}>
                         <Form.Control
@@ -61,7 +61,7 @@ function Header() {
                         {
                             isAuth
                             ?
-                                <NavDropdown.Item onClick={logout}>
+                                <NavDropdown.Item onClick={handleExit}>
                                     Выйти
                                 </NavDropdown.Item>
                                 :
@@ -70,7 +70,6 @@ function Header() {
 
                     </NavDropdown>
                 </div>
-
             </Container>
         </Navbar>
 
