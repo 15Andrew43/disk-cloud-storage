@@ -1,31 +1,36 @@
 import React from 'react';
-import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
-import Form from 'react-bootstrap/Form';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
 
 import FileItem from "./FileItem";
 
 
-import style from './FileList.module.css'
-
-
-
-interface File {
-    name: string;
-    owner: string;
-    modifiedTime: string;
-    size: string;
-}
+import {FileInfo} from "../../redux/store";
+import {useSelector} from "react-redux";
 
 interface FileListProps {
-    files: File[];
+    files: FileInfo[];
 }
 
 function FileList(props: FileListProps) {
+    const cur_path_arr: any = useSelector<any>((state) => {
+        return state.app.cur_path;
+    });
+
     const { files } = props;
+
+    const newFileInfo: FileInfo = {
+        name: '..',
+        file_type: 'Directory',
+        size: 0,
+        created_time: '000000',
+        modified_time: '000000'
+    };
+
+    // Добавляем новый элемент в начало массива
+    if (cur_path_arr.length > 1) {
+        files.unshift(newFileInfo);
+    }
+
+
 
     return (
         <div>
@@ -33,8 +38,9 @@ function FileList(props: FileListProps) {
                 <FileItem
                     key={index}
                     name={file.name}
-                    owner={file.owner}
-                    modifiedTime={file.modifiedTime}
+                    fileType={file.file_type}
+                    owner={"root"}
+                    modifiedTime={file.modified_time}
                     size={file.size}
                 />
             ))}

@@ -1,26 +1,36 @@
 import React from 'react';
-// import logo from './logo.svg';
-// import './App.css';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
-import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-import { Col, Row } from "react-bootstrap";
-import style from "../Body/Body.module.css";
+import {logout} from "../../http/api";
+import { useSelector } from 'react-redux';
+import {useNavigate} from "react-router-dom";
 
 
-// className={`d-flex ${style.my_style}`}
+
 
 function Header() {
+    const navigate = useNavigate();
+
+      const isAuth = useSelector<any>((state) => {
+          console.log("Header!");
+          console.log(state);
+          console.log(localStorage.getItem('token'));
+          return state.app.is_auth;
+      });
+
+
+    function handleExit() {
+        logout();
+        navigate('/auth');
+    }
+
     return (
         <Navbar expand="lg" className="">
             <Container fluid>
-            {/*<Container className={`${style.headerdivs}`}>*/}
-
                 <div><Navbar.Brand href="#"><b>Диск</b></Navbar.Brand></div>
-
                 <div>
                     <Form className="d-flex" style={{width: "50vw"}}>
                         <Form.Control
@@ -35,17 +45,30 @@ function Header() {
 
                 <div>
                     <NavDropdown title="Аккаунт" id="navbarScrollingDropdown" style={{marginRight: "7vw"}}>
-                        <NavDropdown.Item href="#action3">Войти</NavDropdown.Item>
+                        {
+                            isAuth
+                            ?
+                                <></>
+                            :
+                            <NavDropdown.Item href="#action3">Войти</NavDropdown.Item>
+                        }
+
                         <NavDropdown.Item href="#action4">
                             Настройки
                         </NavDropdown.Item>
                         <NavDropdown.Divider />
-                        <NavDropdown.Item href="#action5">
-                            Выйти
-                        </NavDropdown.Item>
+                        {
+                            isAuth
+                            ?
+                                <NavDropdown.Item onClick={handleExit}>
+                                    Выйти
+                                </NavDropdown.Item>
+                                :
+                                <></>
+                        }
+
                     </NavDropdown>
                 </div>
-
             </Container>
         </Navbar>
 

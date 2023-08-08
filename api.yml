@@ -1,0 +1,358 @@
+openapi: 3.0.0
+info:
+  description: architecture hometask
+  version: 3.2.3
+  title: Task Swagger
+  termsOfService: http://swagger.io/terms/
+tags:
+  - name: Drive
+    description: Everything about Drive in fs
+    externalDocs:
+      description: Find out more
+      url: http://swagger.io
+
+paths:
+
+  /api/v1/drive:
+    get:
+      tags:
+        - Drive
+      parameters:
+        - name: path
+          in: query
+          description: The path of the resource in the drive
+          required: true
+          schema:
+            type: string
+        - name: operation
+          in: query
+          description: ls/download/open/share
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of files in the specified directory
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FileItems"
+        '400':
+          $ref: '#/components/responses/ParseError'
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+    post:
+      tags:
+        - Drive
+      parameters:
+        - name: path
+          in: query
+          description: The path of the resource in the drive
+          required: true
+          schema:
+            type: string
+        - name: operation
+          in: query
+          description: create/upload
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                file_name:
+                  type: string
+                  description: Name of the file to be created/uploaded
+                file_type:
+                  type: string
+                  enum: ['File', 'Directory']
+                  description: Type of the file (File or Directory)
+                data:
+                  type: string
+                  description: file content
+      responses:
+        '200':
+          description: add successfully new file
+        '400':
+          $ref: '#/components/responses/ParseError'
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '409':
+          $ref: "#/components/responses/FileExists"
+
+    put:
+      tags:
+        - Drive
+      parameters:
+        - name: path
+          in: query
+          description: The path of the resource in the drive
+          required: true
+          schema:
+            type: string
+        - name: operation
+          in: query
+          description: mv/update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                destination:
+                  type: string
+                  description: The destination path for moving/updating the resource
+                data:
+                  type: string
+                  description: Additional data for the update operation
+      responses:
+        '200':
+          description: file is successfully updated
+        '400':
+          $ref: '#/components/responses/ParseError'
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '404':
+          $ref: "#/components/responses/NotFound"
+    delete:
+      tags:
+        - Drive
+      parameters:
+        - name: path
+          in: query
+          description: The path of the resource in the drive
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Project is successfully deleted
+        '400':
+          $ref: '#/components/responses/ParseError'
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/InsufficientPermissions"
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+  /api/v1/drive/common:
+    get:
+      tags:
+        - Drive
+      summary: Get files with common access
+      responses:
+        '200':
+          description: List of files with common access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FileItems"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/v1/drive/trash:
+    get:
+      tags:
+        - Drive
+      summary: View files in trash
+      responses:
+        '200':
+          description: List of files in trash
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FileItems"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/v1/common/{generated_link}:
+    get:
+      tags:
+        - Drive
+      summary: Access file system using generated link
+      parameters:
+        - name: generated_link
+          in: path
+          description: The generated link for accessing the file system
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Access granted for unauthorized user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FileItems"
+        '400':
+          $ref: '#/components/responses/ParseError'
+
+  /api/v1/common/{generated_link}/download:
+    get:
+      tags:
+        - Drive
+      summary: Download file using generated link
+      parameters:
+        - name: generated_link
+          in: path
+          description: The generated link for downloading the file
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: File is successfully downloaded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FileItem"
+        '400':
+          $ref: '#/components/responses/ParseError'
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+  /api/v1/common/{generated_link}/open:
+    get:
+      tags:
+        - Drive
+      summary: Open file using generated link
+      parameters:
+        - name: generated_link
+          in: path
+          description: The generated link for opening the file
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: File is successfully opened
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FileItem"
+        '400':
+          $ref: '#/components/responses/ParseError'
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+
+
+servers:
+  - url: https://e464-176-214-100-148.ngrok-free.app
+
+components:
+  responses:
+    Unauthorized:
+      description: Необходима авторизация
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    NotFound:
+      description: Не существующий путь
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    FileExists:
+      description: Файл с таким именем уже существует
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    InsufficientPermissions:
+      description: Недостаточно прав
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    ParseError:
+      description: Нет необхоимого паметра
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+  schemas:
+    FileItem:
+      type: object
+      required:
+         - id
+         - name
+         - creator
+         - time_creation
+         - time_updation
+         - size
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        time_creation:
+          type: string
+        time_updation:
+          type: string
+        size:
+          type: number
+        creator:
+          $ref: '#/components/schemas/User'
+    FileItems:
+      type: array
+      items:
+        $ref: "#/components/schemas/FileItem"
+
+    User:
+      type: object
+      required:
+        - id
+        - name
+        - surname
+        - login
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        surname:
+          type: string
+        login:
+          type: string
+    Users:
+      type: array
+      items:
+        $ref: "#/components/schemas/User"
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+        message:
+          type: string

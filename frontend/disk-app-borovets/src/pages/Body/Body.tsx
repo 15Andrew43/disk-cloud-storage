@@ -1,32 +1,51 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import logo from './logo.svg';
 // import './App.css';
 import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
 import Dropdown from 'react-bootstrap/Dropdown';
-import SplitButton from 'react-bootstrap/SplitButton';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Breadcrumb from 'react-bootstrap/Breadcrumb';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import FileList from "/Users/nikolayborovets/Desktop/FALT_MIPT/inf/extracurricular/disk-cloud-storage/frontend/disk-app-borovets/src/components/Other/FileList";
-import filesData from "/Users/nikolayborovets/Desktop/FALT_MIPT/inf/extracurricular/disk-cloud-storage/frontend/disk-app-borovets/src/components/Other/filesData";
+import FileList from "../../components/Other/FileList";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 import style from './Body.module.css'
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import {listFiles} from "../../http/api";
+import {useDispatch, useSelector} from "react-redux";
+import {setFileList} from "../../redux/store";
+import {Dispatch} from "redux";
 
 
 
+export const fetchData = async (cur_path_arr: string[], dispatch: Dispatch) => {
+            try {
+                const rp = await listFiles(cur_path_arr.join(''), 'ls');
+                console.log(rp);
+                dispatch(setFileList(rp.data.files));
+                console.log("bruh");
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
 
 
 function Body() {
+    const dispatch = useDispatch();
+
+    const cur_path_arr: any = useSelector<any>((state) => {
+        return state.app.cur_path;
+    });
+
+    const file_list: any = useSelector<any>((state) => {
+        return state.app.file_list;
+    });
+
+    useEffect(() => {
+        fetchData(cur_path_arr, dispatch);
+    }, [cur_path_arr]);
+
     return (
         <div className={`${style.mainbody}`}>
             <h4 className={`${style.path}`}>
@@ -76,7 +95,7 @@ function Body() {
             </div>
             <div className={`${style.DivToScroll} ${style.DivWithScroll}`}>
 
-                <FileList files={filesData} />
+                <FileList files={file_list} />
 
             </div>
         </div>

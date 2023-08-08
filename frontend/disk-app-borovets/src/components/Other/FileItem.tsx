@@ -1,51 +1,36 @@
 import React from 'react';
 import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
-import Form from 'react-bootstrap/Form';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
 import Modal from 'react-bootstrap/Modal';
 import { useState } from 'react';
-import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 
-
-
-
-// import style from './FileItem.module.css'
 
 import style from './FileItem.module.css';
+import {deleteFile, listFiles} from "../../http/api";
+import {useDispatch, useSelector} from "react-redux";
+import {fetchData} from "../../pages/Body/Body";
+import {popFromCurPath, pushToCurPath, setCurPath} from "../../redux/store";
 
 
 
 interface FileItemProps {
     name: string;
+    fileType: string,
     owner: string;
     modifiedTime: string;
-    size: string;
+    size: number;
 }
 
-// function FileItem({ name, owner, modifiedTime, size }: FileItemProps) {
-//     const fileType = getFileType(name);
-//     const iconClassName = getFileIconClassName(fileType);
-//
-//     return (
-//         <div className={style.fileItem}>
-//             <i className={iconClassName}></i>
-//             <div className={style.fileName}>{name}</div>
-//             <div className={style.owner}>{owner}</div>
-//             <div className={style.modifiedTime}>{modifiedTime}</div>
-//             <div className={style.size}>{size}</div>
-//         </div>
-//     );
-// }
 
+function FileItem({  name, fileType, owner, modifiedTime, size }: FileItemProps) {
+    const dispatch = useDispatch();
 
+    if (fileType === 'Directory') {
+        var iconClassName = 'bi bi-folder-fill';
+    } else { // fileType === 'File'
+        var fileExtension = getFileExtension(name, fileType);
+        var iconClassName = getFileIconClassName(fileExtension);
+    }
 
-
-function FileItem({ name, owner, modifiedTime, size }: FileItemProps) {
-    const fileType = getFileType(name);
-    const iconClassName = getFileIconClassName(fileType);
 
     const [showModal, setShowModal] = useState(false);
 
@@ -54,9 +39,57 @@ function FileItem({ name, owner, modifiedTime, size }: FileItemProps) {
         setShowModal(true);
     };
 
+    const cur_path_arr: any = useSelector<any>((state) => {
+        return state.app.cur_path;
+    });
+
+    const handleDelete = async () => {
+        await deleteFile(cur_path_arr.join('') + name + '/');
+        fetchData(cur_path_arr, dispatch);
+    }
+
+
+    function handleDoubleClick() {
+        // let new_path = [...cur_path_arr, name+'/'];
+        if (fileType === 'Directory') {
+            if (name === '..') {
+                dispatch(popFromCurPath());
+            } else {
+                dispatch(pushToCurPath(name + '/'));
+            }
+        } else { // fileType === 'File'
+            ;
+        }
+
+    }
+
+    async function handleDownload() {
+        try {
+            const response = await listFiles(cur_path_arr.join('') + name + '/', 'download');
+            const blob = new Blob([response.data], { type: response.headers['content-type'] });
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = name; // Здесь можно указать имя файла
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // Освобождаем ресурсы
+            URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Error downloading file:', error);
+        }
+    }
+
+
     return (
         <>
-            <div className={style.fileItem} onContextMenu={handleContextMenu}>
+            <div className={style.fileItem}
+                 onContextMenu={(e) => handleContextMenu(e)}
+                 onDoubleClick={handleDoubleClick}
+            >
                 <i className={iconClassName}></i>
                 <div className={style.fileName}>{name}</div>
                 <div className={style.owner}>{owner}</div>
@@ -74,13 +107,23 @@ function FileItem({ name, owner, modifiedTime, size }: FileItemProps) {
                     <Button variant="primary" onClick={() => console.log('Открыть')}>
                         Открыть
                     </Button>
-                    <Button variant="primary" onClick={() => console.log('Скачать')}>
+                    <Button variant="primary"
+                            onClick={() => {
+                                handleDownload();
+                                console.log('Скачать');
+                            }
+                    }>
                         Скачать
                     </Button>
                     <Button variant="primary" onClick={() => console.log('Переименовать')}>
                         Переименовать
                     </Button>
-                    <Button variant="danger" onClick={() => console.log('Удалить')}>
+                    <Button variant="danger"
+                            onClick={() => {
+                                handleDelete();
+                                setShowModal(false);
+                                console.log('Удалить');
+                            }}>
                         Удалить
                     </Button>
                 </Modal.Body>
@@ -90,10 +133,7 @@ function FileItem({ name, owner, modifiedTime, size }: FileItemProps) {
 }
 
 
-
-
-
-function getFileType(fileName: string): string {
+function getFileExtension(fileName: string, fileType: string): string {
     const fileExtension = fileName.split('.').pop();
     return fileExtension ? fileExtension.toLowerCase() : '';
 }
