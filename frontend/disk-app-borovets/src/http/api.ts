@@ -51,7 +51,30 @@ export async function logout(): Promise<any | ErrorResponse> {
 
 export async function listFiles(path: string, operation: string): Promise<any | ErrorResponse> {
   try {
-    const token = localStorage.getItem('token');
+    if (operation === 'download') {
+      const token = localStorage.getItem('token');
+    const headers = token ? { Authorization: `Token ${token}`, /*Accept: 'application/octet-stream'*/ } : {};
+
+    const response = await axios.get<any>(`${API_URL}/drive`, {
+      params: { path, operation, cacheBustTimestamp: Date.now() },
+      headers,
+      responseType: 'blob',
+      timeout: 120,
+    });
+
+    console.log("\n\n\n");
+    console.log("uuuuuuuuu");
+    console.log(response);
+    // if (operation === 'ls') {
+    //   return response.data.files;
+      return response;
+    // } else if (operation === 'download') {
+    //   return response.data;
+    // } else {
+    //   ;
+    // }
+    } else if (operation === 'ls') {
+      const token = localStorage.getItem('token');
     const headers = token ? { Authorization: `Token ${token}` } : {};
 
     const response = await axios.get<any>(`${API_URL}/drive`, {
@@ -70,6 +93,8 @@ export async function listFiles(path: string, operation: string): Promise<any | 
     // } else {
     //   ;
     // }
+    }
+
   } catch (error: any) {
     console.log('pppppppppppppp');
     if (error.response) {

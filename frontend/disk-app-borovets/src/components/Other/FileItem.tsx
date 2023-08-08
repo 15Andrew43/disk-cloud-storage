@@ -63,25 +63,47 @@ function FileItem({  name, fileType, owner, modifiedTime, size }: FileItemProps)
 
     }
 
+    // does not work :(
+    // async function handleDownload() {
+    //     try {
+    //         const response = await listFiles(cur_path_arr.join('') + name + '/', 'download');
+    //         console.log("type if file = ", response.headers['content-type']);
+    //         console.log("header = ", response.headers);
+    //         const blob = new Blob([response.data], { type: response.headers['content-type'] });
+    //         const url = URL.createObjectURL(blob);
+    //
+    //         const link = document.createElement('a');
+    //         link.href = url;
+    //         link.download = name; // Здесь можно указать имя файла
+    //         document.body.appendChild(link);
+    //         link.click();
+    //         document.body.removeChild(link);
+    //
+    //         URL.revokeObjectURL(url);
+    //     } catch (error) {
+    //         console.error('Error downloading file:', error);
+    //     }
+    // }
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//     it works!!!
     async function handleDownload() {
         try {
             const response = await listFiles(cur_path_arr.join('') + name + '/', 'download');
+            console.log("type if file = ", response.headers['content-type']);
+            console.log("header = ", response.headers);
             const blob = new Blob([response.data], { type: response.headers['content-type'] });
-            const url = URL.createObjectURL(blob);
-
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = name; // Здесь можно указать имя файла
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-            // Освобождаем ресурсы
-            URL.revokeObjectURL(url);
+              const link = document.createElement('a');
+              link.href = window.URL.createObjectURL(blob);
+              link.download = `${name}`;
+              link.click();
         } catch (error) {
             console.error('Error downloading file:', error);
         }
     }
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
     return (

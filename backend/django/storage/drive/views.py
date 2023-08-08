@@ -1,5 +1,15 @@
 import time
 from pathlib import Path
+import mimetypes
+
+from fileprovider.utils import sendfile
+
+from django.utils.encoding import smart_str
+from django.views.static import serve
+
+from wsgiref.util import FileWrapper
+from django.http import HttpResponse
+
 
 from django.http import FileResponse
 from django.core.exceptions import SuspiciousOperation
@@ -11,6 +21,8 @@ from rest_framework.exceptions import ParseError, NotFound, ValidationError, Per
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.views.generic.detail import DetailView
+
 
 from .models import FileInfo
 from .serializers import FileInfoSerializer, FileUploadSerializer
@@ -38,7 +50,7 @@ def get_username_path(request):
 
 
 
-class DriveAPIView(APIView):
+class DriveAPIView(APIView, DetailView):
 
     permission_classes = (IsAuthenticated,) # (IsAuthenticatedOrReadOnly, )
     authentication_classes = (TokenAuthentication, )
@@ -90,9 +102,75 @@ class DriveAPIView(APIView):
                 #     response = HttpResponse(file.read(), content_type='application/octet-stream')
                 #     response['Content-Disposition'] = f'attachment; filename="{filename}"'
                 #     return response
-                file = open(full_path, 'rb')
-                response = FileResponse(file)
-                return response
+                # file = open(full_path, 'rb')
+                # response = FileResponse(file)
+                # return response
+                print("full path", full_path)
+                #######################################################################################################
+
+                # file = open(full_path, 'rb')
+                # response = FileResponse(file)
+                #
+                # if full_path.name.endswith('.png'):
+                #     response['Content-Type'] = 'image/png'
+                # elif full_path.name.endswith('.jpg') or full_path.name.endswith('.jpeg'):
+                #     print('ext = ', full_path.name)
+                #     response['Content-Type'] = 'image/jpeg'
+                # # Добавьте другие условия для разных типов файлов
+                #
+                # return response
+
+                ##############################################################################################################
+
+                mime_type, _ = mimetypes.guess_type(full_path)
+
+                print(mimetypes.guess_type(full_path))
+
+                with full_path.open('rb') as f:
+                    response = HttpResponse(f.read(),
+                                            content_type=mime_type, # 'blob',  # mime_type,
+                                            headers={
+                                                # "Content-Type": 'application/octet-stream',
+                                                "Content-Disposition": f'attachment; filename="{full_path.name}"',
+                                                # "Accept": 'application/octet-stream',
+                                            }
+                                            )
+                    # response['Content-Disposition'] = f'attachment; filename="{full_path.name}"'
+                    return response
+                ###########################################################################################
+                # response = HttpResponse(content_type='application/force-download')
+                # response['Content-Disposition'] = 'attachment; filename=%s' % smart_str(full_path.name)
+                # response['X-Sendfile'] = smart_str(full_path)
+                ###########################################################################################
+                # return serve(request, full_path.name, full_path.parent)
+                # return response
+                ##############################################################
+
+                # mime_type, _ = mimetypes.guess_type(full_path)
+                #
+                # with open(full_path, 'rb') as f:
+                #     response = HttpResponse(f.read(), content_type=mime_type)
+                #     response['Content-Disposition'] = f'attachment; filename="{full_path.name}"'
+                #
+                # return response
+
+            #############################################################
+                # some_file = self.model.objects.get(imported_file=full_path)
+                # response = FileResponse(some_file.imported_file, content_type=mime_type)
+                # https://docs.djangoproject.com/en/1.11/howto/outputting-csv/#streaming-large-csv-files
+                # response['Content-Disposition'] = 'attachment; filename="%s"' % full_path.name
+                # return response
+                ##############################################
+                # filename = "/home/stackoverflow-addict/private-folder(not-porn)/image.jpg"
+                # with full_path.open('rb') as f:
+                #     file_wrapper = FileWrapper(f)
+                #     response = HttpResponse(file_wrapper, content_type=mime_type)
+                #     response['Content-Disposition'] = f'attachment; filename="{full_path.name}"'
+                #     response['Content-Length'] = os.path.getsize(str(full_path))
+                #
+                # return response
+                #################################################################
+                # return sendfile(full_path)
             except FileNotFoundError:
                 return Response({'detail': 'File not found'}, status=status.HTTP_404_NOT_FOUND)
             except Exception as e:
