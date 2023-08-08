@@ -100,9 +100,9 @@ function FileItem({  name, fileType, owner, modifiedTime, size }: FileItemProps)
             {/* Модальное окно */}
             <Modal show={showModal} onHide={() => setShowModal(false)}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Действия с файлом</Modal.Title>
+                    <Modal.Title>Действия с файлом {name}</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
+                <Modal.Body className={style.modalButtons}>
                     {/* Кнопки "Открыть", "Скачать", "Переименовать", "Удалить" */}
                     <Button variant="primary" onClick={() => console.log('Открыть')}>
                         Открыть

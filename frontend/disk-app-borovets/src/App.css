@@ -46,7 +46,7 @@
 }
 
 .leftbar-style {
-  width: 10%;
+  width: 20%;
   /*border: 1px solid black;*/
   height: 20%;
 }
@@ -58,7 +58,7 @@
 }
 
 .body-style {
-  width: 88vw;
+  width: 78vw;
   height: 90vh;
   /*border: 10px solid black;*/
   border: 2px solid #ccc;

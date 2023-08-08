@@ -14,7 +14,7 @@ import style from './Body.module.css'
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import {listFiles} from "../../http/api";
 import {useDispatch, useSelector} from "react-redux";
-import {setFileList} from "../../redux/store";
+import {pushToCurPath, setCurPath, setFileList} from "../../redux/store";
 import {Dispatch} from "redux";
 
 
@@ -46,16 +46,42 @@ function Body() {
         fetchData(cur_path_arr, dispatch);
     }, [cur_path_arr]);
 
+    // const handleBreadcrumbClick = (index: number) => {
+    //     if (index === cur_path_arr.length - 1) {
+    //         const initialPath = ['./']; // Измените на начальный путь, который вы хотите использовать
+    //         dispatch(pushToCurPath(cur_path_arr)); // Сброс пути до начального значения
+    //     } else {
+    //         const newPath = cur_path_arr.slice(0, index + 1);
+    //         dispatch(setCurPath(newPath)); // Обновление пути
+    //     }
+    // };
+    const handleBreadcrumbClick = (index: number) => {
+        const newPath = cur_path_arr.slice(0, index + 1);
+        dispatch(setCurPath(newPath)); // Обновление пути
+    };
+
+    const modifiedPathNames = cur_path_arr.map((path: string) => {
+        if (path === './') {
+            return 'Мой диск';
+        } else {
+            return path.replace(/\//g, '');
+        }
+    });
+
     return (
         <div className={`${style.mainbody}`}>
             <h4 className={`${style.path}`}>
-            <Breadcrumb>
-                <Breadcrumb.Item href="#">Мой диск</Breadcrumb.Item>
-                <Breadcrumb.Item href="https://getbootstrap.com/docs/4.0/components/breadcrumb/">
-                    Андрей лох
-                </Breadcrumb.Item>
-                <Breadcrumb.Item active>Хехех</Breadcrumb.Item>
-            </Breadcrumb>
+                {/*{cur_path_arr.join('')}*/}
+                <Breadcrumb>
+                    {modifiedPathNames.map((path: string, index: number) => (
+                        <Breadcrumb.Item
+                            key={index}
+                            onClick={() => handleBreadcrumbClick(index)} // Добавляем обработчик клика
+                        >
+                            {path}
+                        </Breadcrumb.Item>
+                    ))}
+                </Breadcrumb>
             </h4>
             {/*<h3 className={`${style.path}`}>Мой диск</h3>*/}
             <div className={`${style.filters}`}>
