@@ -59,7 +59,7 @@ export async function listFiles(path: string, operation: string): Promise<any | 
       params: { path, operation, cacheBustTimestamp: Date.now() },
       headers,
       responseType: 'blob',
-      timeout: 120,
+      // timeout: 120,
     });
 
     console.log("\n\n\n");
@@ -97,6 +97,7 @@ export async function listFiles(path: string, operation: string): Promise<any | 
 
   } catch (error: any) {
     console.log('pppppppppppppp');
+    console.log(error);
     if (error.response) {
       // return { error: error.response.data.detail };
       return { error: error };
