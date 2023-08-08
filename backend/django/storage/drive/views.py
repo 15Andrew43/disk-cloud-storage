@@ -31,7 +31,7 @@ from rest_framework import serializers
 from decouple import config
 
 
-def get_username_path(request):
+def get_username_path(request, user_local_dir):
     username = request.user.username
     path = request.query_params.get('path')
 
@@ -40,8 +40,9 @@ def get_username_path(request):
     if '..' in path:
         raise PermissionDenied(detail='Доступ запрещен')
 
-    ROOT_DIR = Path(config('ROOT_DIR'))
-    full_path = ROOT_DIR / username / path
+    # ROOT_DIR = Path(config('ROOT_DIR'))
+    # full_path = ROOT_DIR / username / path
+    full_path = user_local_dir / path
 
     if not full_path.exists():
         raise FileNotFoundError
@@ -50,34 +51,38 @@ def get_username_path(request):
 
 
 
-class DriveAPIView(APIView, DetailView):
 
-    permission_classes = (IsAuthenticated,) # (IsAuthenticatedOrReadOnly, )
-    authentication_classes = (TokenAuthentication, )
+
+
+
+
+
+
+
+class DriveCommonAPIView(APIView):
+
+    # permission_classes = (ReadOnly, )
+    # authentication_classes = (TokenAuthentication, )
+
+    def __init__(self, local_path):
+        super().__init__()
+        ROOT_DIR = Path(config('ROOT_DIR'))
+        self.full_path = ROOT_DIR / local_path
+
     def get(self, request):
-        try:
-            username, full_path = get_username_path(request)
-        except ValidationError as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        except PermissionDenied as e:
-            return Response({"error": str(e)}, status=status.HTTP_403_FORBIDDEN)
-        except FileNotFoundError as e :
-            return Response({"error": "Такого пути не существует"}, status=status.HTTP_404_NOT_FOUND)
-        except SuspiciousOperation as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         operation = self.request.query_params.get('operation')
         if not operation:
             return Response({"error": 'Необходим параметр "operation"'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # print(full_path)
+        # print(self.full_path)
         # print(path)
         # print("\n\n\n")
 
         if operation == 'ls':
-            if full_path.is_dir():
+            if self.full_path.is_dir():
                 files_list = []
-                for entry_path in full_path.iterdir():
+                for entry_path in self.full_path.iterdir():
                     if entry_path.is_file():
                         entry_type = "File"
                     elif entry_path.is_dir():
@@ -98,79 +103,20 @@ class DriveAPIView(APIView, DetailView):
         elif operation == 'download':
             try:
                 print("bababababab")
-                # with open(filename, 'rb') as file:
-                #     response = HttpResponse(file.read(), content_type='application/octet-stream')
-                #     response['Content-Disposition'] = f'attachment; filename="{filename}"'
-                #     return response
-                # file = open(full_path, 'rb')
-                # response = FileResponse(file)
-                # return response
-                print("full path", full_path)
-                #######################################################################################################
+                print("full path", self.full_path)
 
-                # file = open(full_path, 'rb')
-                # response = FileResponse(file)
-                #
-                # if full_path.name.endswith('.png'):
-                #     response['Content-Type'] = 'image/png'
-                # elif full_path.name.endswith('.jpg') or full_path.name.endswith('.jpeg'):
-                #     print('ext = ', full_path.name)
-                #     response['Content-Type'] = 'image/jpeg'
-                # # Добавьте другие условия для разных типов файлов
-                #
-                # return response
+                mime_type, _ = mimetypes.guess_type(self.full_path)
 
-                ##############################################################################################################
+                print(mimetypes.guess_type(self.full_path))
 
-                mime_type, _ = mimetypes.guess_type(full_path)
-
-                print(mimetypes.guess_type(full_path))
-
-                with full_path.open('rb') as f:
+                with self.full_path.open('rb') as f:
                     response = HttpResponse(f.read(),
                                             content_type=mime_type, # 'blob',  # mime_type,
                                             headers={
-                                                # "Content-Type": 'application/octet-stream',
-                                                "Content-Disposition": f'attachment; filename="{full_path.name}"',
-                                                # "Accept": 'application/octet-stream',
+                                                "Content-Disposition": f'attachment; filename="{self.full_path.name}"',
                                             }
                                             )
-                    # response['Content-Disposition'] = f'attachment; filename="{full_path.name}"'
                     return response
-                ###########################################################################################
-                # response = HttpResponse(content_type='application/force-download')
-                # response['Content-Disposition'] = 'attachment; filename=%s' % smart_str(full_path.name)
-                # response['X-Sendfile'] = smart_str(full_path)
-                ###########################################################################################
-                # return serve(request, full_path.name, full_path.parent)
-                # return response
-                ##############################################################
-
-                # mime_type, _ = mimetypes.guess_type(full_path)
-                #
-                # with open(full_path, 'rb') as f:
-                #     response = HttpResponse(f.read(), content_type=mime_type)
-                #     response['Content-Disposition'] = f'attachment; filename="{full_path.name}"'
-                #
-                # return response
-
-            #############################################################
-                # some_file = self.model.objects.get(imported_file=full_path)
-                # response = FileResponse(some_file.imported_file, content_type=mime_type)
-                # https://docs.djangoproject.com/en/1.11/howto/outputting-csv/#streaming-large-csv-files
-                # response['Content-Disposition'] = 'attachment; filename="%s"' % full_path.name
-                # return response
-                ##############################################
-                # filename = "/home/stackoverflow-addict/private-folder(not-porn)/image.jpg"
-                # with full_path.open('rb') as f:
-                #     file_wrapper = FileWrapper(f)
-                #     response = HttpResponse(file_wrapper, content_type=mime_type)
-                #     response['Content-Disposition'] = f'attachment; filename="{full_path.name}"'
-                #     response['Content-Length'] = os.path.getsize(str(full_path))
-                #
-                # return response
-                #################################################################
-                # return sendfile(full_path)
             except FileNotFoundError:
                 return Response({'detail': 'File not found'}, status=status.HTTP_404_NOT_FOUND)
             except Exception as e:
@@ -185,16 +131,6 @@ class DriveAPIView(APIView, DetailView):
 
         return Response({'result': 'aaa'})
     def post(self, request):
-        try:
-            username, full_path = get_username_path(request)
-        except ValidationError as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        except PermissionDenied as e:
-            return Response({"error": str(e)}, status=status.HTTP_403_FORBIDDEN)
-        except FileNotFoundError as e :
-            return Response({"error": "Такого пути не существует"}, status=status.HTTP_404_NOT_FOUND)
-        except SuspiciousOperation as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         operation = self.request.query_params.get('operation')
         if not operation:
@@ -208,7 +144,7 @@ class DriveAPIView(APIView, DetailView):
             if not file_type or not file_name:
                 return Response({"error": 'Необходим ключ "file_type" и "file_name"'}, status=status.HTTP_400_BAD_REQUEST)
 
-            new_file_path = full_path / file_name
+            new_file_path = self.full_path / file_name
             if new_file_path.exists():
                 return Response({"error": "Файл с таким именем уже существует"}, status=status.HTTP_409_CONFLICT)
 
@@ -228,7 +164,7 @@ class DriveAPIView(APIView, DetailView):
                 file_name = file.name
                 file_content = file.read()  # Содержимое файла (байтовая строка)
 
-                upload_path = full_path / file_name
+                upload_path = self.full_path / file_name
 
                 try:
                     # Открываем файл для записи и записываем содержимое
@@ -245,16 +181,6 @@ class DriveAPIView(APIView, DetailView):
         return Response({'result': 'bbb'})
 
     def put(self, request, *args, **kwargs):
-        try:
-            username, full_path = get_username_path(request)
-        except ValidationError as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        except PermissionDenied as e:
-            return Response({"error": str(e)}, status=status.HTTP_403_FORBIDDEN)
-        except FileNotFoundError as e :
-            return Response({"error": "Такого пути не существует"}, status=status.HTTP_404_NOT_FOUND)
-        except SuspiciousOperation as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         operation = self.request.query_params.get('operation')
         if not operation:
@@ -268,11 +194,11 @@ class DriveAPIView(APIView, DetailView):
                 return Response({"error": 'Необходим параметр "destination"'}, status=status.HTTP_400_BAD_REQUEST)
             ROOT_DIR = Path(config('ROOT_DIR'))
             destination_path = ROOT_DIR / username / destination
-            full_path.rename(destination_path)
+            self.full_path.rename(destination_path)
         elif operation == 'update':
-            if full_path.is_dir():
+            if self.full_path.is_dir():
                 return Response({"error": 'Нельзя засунуть текст в директорию'}, status=status.HTTP_400_BAD_REQUEST)
-            with full_path.open(mode='w') as file:
+            with self.full_path.open(mode='w') as file:
                 data = request.data.get('data')
                 if data:
                     file.write(data)
@@ -282,18 +208,8 @@ class DriveAPIView(APIView, DetailView):
         return Response({"result": "vvv"})
 
     def delete(self, request):
-        try:
-            username, full_path = get_username_path(request)
-        except ValidationError as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        except PermissionDenied as e:
-            return Response({"error": str(e)}, status=status.HTTP_403_FORBIDDEN)
-        except FileNotFoundError as e :
-            return Response({"error": "Такого пути не существует"}, status=status.HTTP_404_NOT_FOUND)
-        except SuspiciousOperation as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-        if full_path.is_dir():
+        if self.full_path.is_dir():
             def remove_non_empty_directory(directory_path):
                 try:
                     directory = Path(directory_path)
@@ -310,10 +226,56 @@ class DriveAPIView(APIView, DetailView):
                 except Exception as e:
                     print(f"Ошибка при удалении директории {directory_path}: {e}")
 
-            remove_non_empty_directory(full_path)
-        elif full_path.is_file():
-            full_path.unlink()
+            remove_non_empty_directory(self.full_path)
+        elif self.full_path.is_file():
+            self.full_path.unlink()
         else:
             return Response({"error": 'Удаляю не понятно что'}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({"result": "lll"})
+
+
+
+
+
+
+class DriveAPIView(DriveCommonAPIView):
+
+    permission_classes = (IsAuthenticated,) # (IsAuthenticatedOrReadOnly, )
+    authentication_classes = (TokenAuthentication, )
+
+    def __init__(self):
+        super().__init__('')
+
+    def set_full_path(self, request):
+        try:
+            username, full_path = get_username_path(request, Path(config('ROOT_DIR')) / request.user.username)
+        except ValidationError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except PermissionDenied as e:
+            return Response({"error": str(e)}, status=status.HTTP_403_FORBIDDEN)
+        except FileNotFoundError as e :
+            return Response({"error": "Такого пути не существует"}, status=status.HTTP_404_NOT_FOUND)
+        except SuspiciousOperation as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        self.username = username
+        self.full_path = full_path
+
+    def get(self, request):
+        self.set_full_path(request)
+        return super().get(request)
+
+
+    def post(self, request):
+        self.set_full_path(request)
+        return super().post(request)
+
+    def put(self, request, *args, **kwargs):
+        self.set_full_path(request)
+        return super().put(request)
+
+    def delete(self, request):
+        self.set_full_path(request)
+        return super().delete(request)
+
