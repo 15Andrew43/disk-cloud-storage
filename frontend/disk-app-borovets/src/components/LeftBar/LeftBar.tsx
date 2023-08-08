@@ -72,10 +72,10 @@ function LeftBar() {
 
             </DropdownButton>
             <div className={`${style.navigation}`}>
-                <Nav.Link href="#action1">Мой диск</Nav.Link>
-                <Nav.Link href="#action2">Общие файлы</Nav.Link>
-                <Nav.Link href="#action3">Фото</Nav.Link>
-                <Nav.Link href="#action4">Корзина</Nav.Link>
+                <Nav.Link className={`${style.navigationButton}`} href="/fs">Мой диск</Nav.Link>
+                <Nav.Link className={`${style.navigationButton}`} href="#action2">Общие файлы</Nav.Link>
+                <Nav.Link className={`${style.navigationButton}`} href="#action3">Фото</Nav.Link>
+                <Nav.Link className={`${style.navigationButton}`} href="#action4">Корзина</Nav.Link>
             </div>
         </div>
     );
