@@ -40,10 +40,12 @@ function LeftBar() {
 
       ///////////////////////////////////////////////////////////////////////////////////
 
+        for (let i = 0; i < event.target.files.length; i++) {
+            await addFile(cur_path_arr.join(''), 'upload', event.target.files[i]);
+        }
+        // var r = await addFile(cur_path_arr.join(''), 'upload', selectedFile);
 
-        var r = await addFile(cur_path_arr.join(''), 'upload', selectedFile);
-
-        console.log("response", r);
+        // console.log("response", r);
 
         fetchData(cur_path_arr, dispatch);
 
