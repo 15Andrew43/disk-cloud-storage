@@ -27,9 +27,9 @@ function App() {
       <div className={`background-style`}>
             <div className={`header-style`}><Header /></div>
             <div className={`leftbar_body-style`}>
-              <div className={`leftbar-style`}>
-                <LeftBar/>
-              </div>
+              {/*<div className={`leftbar-style`}>*/}
+              {/*  <LeftBar/>*/}
+              {/*</div>*/}
               <div className={`body-style`}>
                   <Routes>
                       <Route path="/fs" element={<Body/>} />

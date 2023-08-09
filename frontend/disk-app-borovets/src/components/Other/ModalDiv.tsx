@@ -15,7 +15,8 @@ interface ModalDivProps {
 function ModalDiv({ isFolder }: ModalDivProps) {
     const [show, setShow] = useState(false);
     const dispatch = useDispatch();
-    const location = useLocation();
+    // const location = useLocation();
+    const { random_url } = useParams();
 
 
     const cur_path_arr: any = useSelector<any>((state) => {
@@ -23,12 +24,13 @@ function ModalDiv({ isFolder }: ModalDivProps) {
     });
 
     const handleClose = async () => {
-        const pathname = location.pathname;
-        const segments = pathname.split('/');
-        const filteredSegments = segments.filter(segment => segment !== '');
-        const random_url = filteredSegments[filteredSegments.length - 1];
-
-        console.log("RANDOM URL!!! = ", random_url);
+        // const pathname = location.pathname;
+        // const segments = pathname.split('/');
+        // const filteredSegments = segments.filter(segment => segment !== '');
+        // const random_urllll = filteredSegments[filteredSegments.length - 1];
+        //
+        // console.log("RANDOM URL!!! = ", random_urllll);
+        console.log("ALWAYS UNDEFINDE = ", random_url);
 
         if (isFolder) {
             await addFile(cur_path_arr.join(''), 'create', {file_name: fileName, file_type: 'Directory', file_content: ''}, random_url);

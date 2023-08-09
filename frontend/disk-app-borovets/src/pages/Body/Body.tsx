@@ -17,6 +17,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {pushToCurPath, setCurPath, setFileList} from "../../redux/store";
 import {Dispatch} from "redux";
 import {useParams} from "react-router-dom";
+import LeftBar from "../../components/LeftBar/LeftBar";
 
 
 
@@ -73,6 +74,11 @@ function Body() {
     });
 
     return (
+        <>
+            <div className={`leftbar-style`}>
+                <LeftBar/>
+              </div>
+
         <div className={`${style.mainbody}`}>
             <h4 className={`${style.path}`}>
                 {/*{cur_path_arr.join('')}*/}
@@ -129,6 +135,7 @@ function Body() {
 
             </div>
         </div>
+            </>
     );
 }
 

@@ -252,9 +252,16 @@ class DrivePersonalAPIView(DriveBaseAPIView):
         super().__init__('')
 
     def set_full_path(self, request, *args, **kwargs):
+        username = request.user.username
+        full_path = get_safe_path(request, Path(config('ROOT_DIR')) / username)
+
+
+        self.username = username
+        self.full_path = Path(full_path)
+
+    def get(self, request, *args, **kwargs):
         try:
-            username = request.user.username
-            full_path = get_safe_path(request, Path(config('ROOT_DIR')) / username)
+            self.set_full_path(request)
         except ValidationError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         except PermissionDenied as e:
@@ -263,25 +270,47 @@ class DrivePersonalAPIView(DriveBaseAPIView):
             return Response({"error": "Такого пути не существует"}, status=status.HTTP_404_NOT_FOUND)
         except SuspiciousOperation as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-        self.username = username
-        self.full_path = Path(full_path)
-
-    def get(self, request, *args, **kwargs):
-        self.set_full_path(request)
         return super().get(request)
 
 
     def post(self, request, *args, **kwargs):
-        self.set_full_path(request)
+        try:
+            self.set_full_path(request)
+            print('FULL PATH IN POST     PERSONAL = ', self.full_path)
+        except ValidationError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except PermissionDenied as e:
+            return Response({"error": str(e)}, status=status.HTTP_403_FORBIDDEN)
+        except FileNotFoundError as e :
+            return Response({"error": "Такого пути не существует"}, status=status.HTTP_404_NOT_FOUND)
+        except SuspiciousOperation as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return super().post(request)
 
     def put(self, request, *args, **kwargs):
-        self.set_full_path(request)
+        try:
+            self.set_full_path(request)
+        except ValidationError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except PermissionDenied as e:
+            return Response({"error": str(e)}, status=status.HTTP_403_FORBIDDEN)
+        except FileNotFoundError as e :
+            return Response({"error": "Такого пути не существует"}, status=status.HTTP_404_NOT_FOUND)
+        except SuspiciousOperation as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return super().put(request)
 
     def delete(self, request, *args, **kwargs):
-        self.set_full_path(request)
+        try:
+            self.set_full_path(request)
+        except ValidationError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except PermissionDenied as e:
+            return Response({"error": str(e)}, status=status.HTTP_403_FORBIDDEN)
+        except FileNotFoundError as e :
+            return Response({"error": "Такого пути не существует"}, status=status.HTTP_404_NOT_FOUND)
+        except SuspiciousOperation as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return super().delete(request)
 
 
@@ -296,22 +325,23 @@ class DriveCommonAPIView(DriveBaseAPIView):
 
     def set_full_path(self, request, *args, **kwargs):
         print("QWEQWEWQEQWE = ", args)
+        common_url = args[0]
+        if not common_url:
+            raise Response({"error": 'Необходим параметр "common_url"'}, status=status.HTTP_400_BAD_REQUEST)
+        common_url_instance = CommonUrl.objects.get(url=common_url)
+
+        username = request.user.username
+        full_path = get_safe_path(request, self.full_path / common_url_instance.local_path)
+
+        access_rights = common_url_instance.access_rights
+
+        self.username = username
+        self.full_path = Path(full_path)
+
+    def get(self, request, *args, **kwargs):
+        # print("common getgetggetgget = ", kwargs['common_url'])
         try:
-            common_url = args[0]
-            if not common_url:
-                return Response({"error": 'Необходим параметр "common_url"'}, status=status.HTTP_400_BAD_REQUEST)
-
-            common_url_instance = CommonUrl.objects.get(url=common_url)
-
-            username = request.user.username
-
-            full_path = get_safe_path(request, self.full_path / common_url_instance.local_path)
-            # full_path = common_url_instance.local_path
-
-            # Проверка прав доступа, если необходимо
-            access_rights = common_url_instance.access_rights
-            # Ваш код для проверки прав доступа
-
+            self.set_full_path(request, kwargs['common_url'])
         except CommonUrl.DoesNotExist:
             return Response({"error": "Такой common_url не найден"}, status=status.HTTP_404_NOT_FOUND)
         except PermissionDenied as e:
@@ -321,27 +351,46 @@ class DriveCommonAPIView(DriveBaseAPIView):
         except SuspiciousOperation as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-        self.username = username
-        self.full_path = Path(full_path)
-
-        # Установка прав доступа, если необходимо
-        # self.access_rights = access_rights
-
-    def get(self, request, *args, **kwargs):
-        # print("common getgetggetgget = ", kwargs['common_url'])
-        self.set_full_path(request, kwargs['common_url'])
         print("full path from common = ", self.full_path)
         return super().get(request)
 
 
     def post(self, request,*args, **kwargs):
-        self.set_full_path(request, kwargs['common_url'])
+        try:
+            self.set_full_path(request, kwargs['common_url'])
+            print('FULL PATH IN POST     COMMON = ', self.full_path)
+        except CommonUrl.DoesNotExist:
+            return Response({"error": "Такой common_url не найден"}, status=status.HTTP_404_NOT_FOUND)
+        except PermissionDenied as e:
+            return Response({"error": str(e)}, status=status.HTTP_403_FORBIDDEN)
+        except FileNotFoundError as e:
+            return Response({"error": "Такого пути не существует"}, status=status.HTTP_404_NOT_FOUND)
+        except SuspiciousOperation as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return super().post(request)
 
     def put(self, request, *args, **kwargs):
-        self.set_full_path(request, kwargs['common_url'])
+        try:
+            self.set_full_path(request, kwargs['common_url'])
+        except CommonUrl.DoesNotExist:
+            return Response({"error": "Такой common_url не найден"}, status=status.HTTP_404_NOT_FOUND)
+        except PermissionDenied as e:
+            return Response({"error": str(e)}, status=status.HTTP_403_FORBIDDEN)
+        except FileNotFoundError as e:
+            return Response({"error": "Такого пути не существует"}, status=status.HTTP_404_NOT_FOUND)
+        except SuspiciousOperation as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return super().put(request)
 
     def delete(self, request, *args, **kwargs):
-        self.set_full_path(request, kwargs['common_url'])
+        try:
+            self.set_full_path(request, kwargs['common_url'])
+        except CommonUrl.DoesNotExist:
+            return Response({"error": "Такой common_url не найден"}, status=status.HTTP_404_NOT_FOUND)
+        except PermissionDenied as e:
+            return Response({"error": str(e)}, status=status.HTTP_403_FORBIDDEN)
+        except FileNotFoundError as e:
+            return Response({"error": "Такого пути не существует"}, status=status.HTTP_404_NOT_FOUND)
+        except SuspiciousOperation as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return super().delete(request)
