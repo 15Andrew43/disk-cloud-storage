@@ -12,13 +12,74 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import style from './Body.module.css'
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import {listFiles} from "../../http/api";
+import {addFile, listFiles} from "../../http/api";
 import {useDispatch, useSelector} from "react-redux";
 import {pushToCurPath, setCurPath, setFileList} from "../../redux/store";
 import {Dispatch} from "redux";
 import {useParams} from "react-router-dom";
 import LeftBar from "../../components/LeftBar/LeftBar";
+import ModalDiv from "../../components/Other/ModalDiv";
+import Form from "react-bootstrap/Form";
 
+
+function CreateButton() {
+    const dispatch = useDispatch();
+    const { random_url } = useParams();
+
+    const cur_path_arr: any = useSelector<any>((state) => {
+        return state.app.cur_path;
+    });
+
+    async function handleFileChange(event: any) {
+        const selectedFile = event.target.files[0];
+        console.log("selecteed file", selectedFile);
+
+        if (selectedFile) {
+            const fileName = selectedFile.name;
+            const fileType = selectedFile.type;
+            const fileSize = selectedFile.size;
+
+            console.log('File Name:', fileName);
+            console.log('File Type:', fileType);
+            console.log('File Size:', fileSize, 'bytes');
+
+            const reader = new FileReader();
+            reader.onload = function (event: any) {
+                const fileContent = event.target.result; // Содержимое файла в формате Data URL
+                console.log('File Content:', fileContent);
+            };
+            reader.readAsDataURL(selectedFile);
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        for (let i = 0; i < event.target.files.length; i++) {
+            await addFile(cur_path_arr.join(''), 'upload', event.target.files[i], random_url);
+        }
+        // var r = await addFile(cur_path_arr.join(''), 'upload', selectedFile);
+
+        // console.log("response", r);
+
+        fetchData(cur_path_arr, dispatch, random_url);
+
+
+        //////////////////////////////////////////////////////////////////////////////////
+
+    }
+
+
+    return (
+        <DropdownButton className={`${style.createButton}`} id="dropdown-item-button" title="Создать">
+            <ModalDiv isFolder={false} /> {/* Создание файла */}
+            <ModalDiv isFolder={true} /> {/* Создание папки */}
+            <Form.Control
+                type="file"
+                multiple
+                onChange={handleFileChange}
+            />
+        </DropdownButton>
+    );
+}
 
 
 export const fetchData = async (cur_path_arr: string[], dispatch: Dispatch, random_url: string | undefined) => {
@@ -75,9 +136,7 @@ function Body() {
 
     return (
         <>
-            <div className={`leftbar-style`}>
-                <LeftBar/>
-              </div>
+            <CreateButton/>
 
         <div className={`${style.mainbody}`}>
             <h4 className={`${style.path}`}>
