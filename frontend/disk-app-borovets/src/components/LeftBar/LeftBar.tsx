@@ -11,68 +11,13 @@ import axios from "axios";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchData} from "../../pages/Body/Body";
 import {useParams} from "react-router-dom";
+
+
+
+
 function LeftBar() {
-    const dispatch = useDispatch();
-    const { random_url } = useParams();
-
-    const cur_path_arr: any = useSelector<any>((state) => {
-        return state.app.cur_path;
-    });
-
-    async function handleFileChange(event: any) {
-      const selectedFile = event.target.files[0];
-      console.log("selecteed file", selectedFile);
-
-      if (selectedFile) {
-        const fileName = selectedFile.name;
-        const fileType = selectedFile.type;
-        const fileSize = selectedFile.size;
-
-        console.log('File Name:', fileName);
-        console.log('File Type:', fileType);
-        console.log('File Size:', fileSize, 'bytes');
-
-        const reader = new FileReader();
-        reader.onload = function (event: any) {
-          const fileContent = event.target.result; // Содержимое файла в формате Data URL
-          console.log('File Content:', fileContent);
-        };
-        reader.readAsDataURL(selectedFile);
-      }
-
-      ///////////////////////////////////////////////////////////////////////////////////
-
-        for (let i = 0; i < event.target.files.length; i++) {
-            await addFile(cur_path_arr.join(''), 'upload', event.target.files[i], random_url);
-        }
-        // var r = await addFile(cur_path_arr.join(''), 'upload', selectedFile);
-
-        // console.log("response", r);
-
-        fetchData(cur_path_arr, dispatch, random_url);
-
-
-      //////////////////////////////////////////////////////////////////////////////////
-
-    }
-
-
     return (
         <div className={`${style.container}`}>
-            {/*<Button variant="outline-success" className={style.createButton}>Создать</Button>*/}
-            <DropdownButton className={`${style.createButton}`} id="dropdown-item-button" title="Создать">
-                {/*<Dropdown.ItemText>Dropdown item text</Dropdown.ItemText>*/}
-                {/*<Dropdown.Item as="button">Action</Dropdown.Item>*/}
-
-                <ModalDiv isFolder={false} /> {/* Создание файла */}
-                <ModalDiv isFolder={true} /> {/* Создание папки */}
-                <Form.Control
-                    type="file"
-                    multiple
-                    onChange={handleFileChange}
-                />
-
-            </DropdownButton>
             <div className={`${style.navigation}`}>
                 <Nav.Link className={`${style.navigationButton}`} href="/fs">Мой диск</Nav.Link>
                 <Nav.Link className={`${style.navigationButton}`} href="#action2">Общие файлы</Nav.Link>
