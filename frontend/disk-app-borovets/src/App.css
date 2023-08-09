@@ -42,7 +42,7 @@
 }
 
 .header-style {
-
+  /*height: 7vh*/
 }
 
 .leftbar-style {
@@ -58,11 +58,13 @@
 }
 
 .body-style {
-  width: 78%;
-  height: 95%;
+  width: 78vw;
+  height: 90vh;
   /*border: 10px solid black;*/
   border: 2px solid #ccc;
   border-radius: 35px; /* Задаем радиус закругления углов в 10 пикселей */
   padding: 10px; /* Добавляем внутренние отступы для контента внутри элемента */
   background-color: white;
+  /*overflow: hidden;*/
+
 }

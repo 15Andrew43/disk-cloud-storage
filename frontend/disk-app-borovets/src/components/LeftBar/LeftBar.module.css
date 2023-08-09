@@ -17,6 +17,13 @@
     margin-left: 20px;
 }
 
+.navigationButton:hover {
+    background-color: transparent; /* Цвет фона кнопки при наведении */
+    border: none; /* Убираем границу при наведении */
+    color: green; /* Например, изменяем цвет текста кнопки при наведении */
+}
+
 .createButton {
     margin: 20px; /* Отступ справа для кнопки "Создать" */
+    /*text-overflow: ellipsis;*/
 }

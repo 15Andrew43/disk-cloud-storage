@@ -1,26 +1,48 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useEffect} from 'react';
+// import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import {BrowserRouter as Router, Routes, Route, useNavigate, Navigate, useLocation} from 'react-router-dom';
+
 import './App.css';
 import Header from "./components/Header/Header";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import LeftBar from "./components/LeftBar/LeftBar";
-import Body from "./components/Body/Body";
-
-// import style from './App.css';
+import Body from "./pages/Body/Body";
+import Authorization, {handleLogin} from "./pages/Authorization";
+import {useDispatch, useSelector} from "react-redux";
+import {setIsAuth} from "./redux/store"; // Импортируйте компонент авторизации
 
 function App() {
+    const dispatch = useDispatch();
+    const location = useLocation();
+
+    const navigate = useNavigate();
+
+    useEffect( () => {
+        handleLogin(dispatch, navigate, location.pathname);
+    }, [])
+
+
   return (
+
       <div className={`background-style`}>
-        <Header/>
-        <div className={`leftbar_body-style`}>
-          <div className={`leftbar-style`}>
-              <LeftBar/>
-          </div>
-          <div className={`body-style`}>
-              <Body/>
-          </div>
-        </div>
+            <div className={`header-style`}><Header /></div>
+            <div className={`leftbar_body-style`}>
+              <div className={`leftbar-style`}>
+                <LeftBar/>
+              </div>
+              <div className={`body-style`}>
+                  <Routes>
+                      <Route path="/fs" element={<Body/>} />
+                      <Route path="/common/:random_url" element={<Body/>} />
+                      {/*<Route path="/media" component={MediaComponent} />*/}
+                      {/*<Route path="/trash" component={TrashComponent} />*/}
+                      {/*<Redirect to="/fs" />*/}
+                      <Route path="/auth" element={<Authorization/>} />
+                  </Routes>
+              </div>
+            </div>
       </div>
+
   );
 }
 

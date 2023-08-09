@@ -1,0 +1,38 @@
+.fileItem {
+        border-top-style: dashed;
+        border-top-color: #D9D9D9;
+
+    color: #3B3C3E;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 10px 7px 5px;
+    margin-bottom: 5px;
+    display: flex;
+    gap: 10px;
+}
+
+.fileItem:hover {
+    background-color: transparent; /* Цвет фона кнопки при наведении */
+    /*border-top-style: dashed ; !* Убираем границу при наведении *!*/
+    /*border-top-color: green;*/
+    color: green; /* Например, изменяем цвет текста кнопки при наведении */
+}
+
+/* Определение одинакового размера для каждого элемента */
+.fileName,
+.owner,
+.modifiedTime,
+.size {
+    flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    /*text-align: center;*/
+}
+
+.modalButtons {
+    display: flex;
+    gap: 15px;
+}
+
+
