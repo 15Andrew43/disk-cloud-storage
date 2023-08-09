@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'djoser',
     'corsheaders',
+    # 'fileprovider'
 ]
 
 MIDDLEWARE = [
@@ -55,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'fileprovider.middleware.FileProviderMiddleware',
 ]
 
 ROOT_URLCONF = 'storage.urls'
@@ -132,10 +134,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 REST_FRAMEWORK = {
-    # 'DEFAULT_RENDERER_CLASSES': [
-    #     'rest_framework.renderers.JSONRender',
-    #     'rest_framework.renderers.BrowsableAPERenderer',
-    # ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.MultiPartParser',
+        'rest_framework.parsers.FormParser',
+    ],
 
     'DEFAULT_PERMISSIONS_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
@@ -147,6 +154,7 @@ REST_FRAMEWORK = {
         # 'rest_framework.authentication.SessionAuthentication', ## session
     ]
 }
+
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Пример: адрес вашего фронтенд-приложения
@@ -179,3 +187,11 @@ CORS_ALLOWED_ORIGINS = [
 #         },
 #     },
 # }
+
+
+# or you can put FILEPROVIDER_NAME as python in your local settings file
+# if DEBUG:
+#     FILEPROVIDER_NAME = "python"
+# else:
+#     or apache, lighthttpd, caddy
+    # FILEPROVIDER_NAME = "nginx"

@@ -6,6 +6,7 @@ import style from './ModalDiv.module.css';
 import {addFile} from "../../http/api";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchData} from "../../pages/Body/Body";
+import {useLocation, useParams} from "react-router-dom";
 
 interface ModalDivProps {
     isFolder: boolean;
@@ -14,20 +15,31 @@ interface ModalDivProps {
 function ModalDiv({ isFolder }: ModalDivProps) {
     const [show, setShow] = useState(false);
     const dispatch = useDispatch();
+    // const location = useLocation();
+    const { random_url } = useParams();
+
 
     const cur_path_arr: any = useSelector<any>((state) => {
         return state.app.cur_path;
     });
 
     const handleClose = async () => {
+        // const pathname = location.pathname;
+        // const segments = pathname.split('/');
+        // const filteredSegments = segments.filter(segment => segment !== '');
+        // const random_urllll = filteredSegments[filteredSegments.length - 1];
+        //
+        // console.log("RANDOM URL!!! = ", random_urllll);
+        console.log("ALWAYS UNDEFINDE = ", random_url);
+
         if (isFolder) {
-            await addFile(cur_path_arr.join(''), 'create', {file_name: fileName, file_type: 'Directory', file_content: ''});
+            await addFile(cur_path_arr.join(''), 'create', {file_name: fileName, file_type: 'Directory', file_content: ''}, random_url);
         } else {
-            await addFile(cur_path_arr.join(''), 'create', {file_name: fileName, file_type: 'File', file_content: fileContent});
+            await addFile(cur_path_arr.join(''), 'create', {file_name: fileName, file_type: 'File', file_content: fileContent}, random_url);
         }
         setFileName('');
         setFileContent('');
-        fetchData(cur_path_arr, dispatch);
+        fetchData(cur_path_arr, dispatch, random_url);
         setShow(false);
     };
     const handleShow = () => setShow(true);

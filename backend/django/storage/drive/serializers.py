@@ -1,9 +1,16 @@
 from rest_framework import serializers
 
+from .models import CommonUrl
+
+class CommonUrlSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CommonUrl
+        fields = ['id', 'url', 'local_path', 'access_rights']
+
+
 
 class FileUploadSerializer(serializers.Serializer):
     file = serializers.FileField()
-
 
 
 class FileInfoSerializer(serializers.Serializer):
