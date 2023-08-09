@@ -136,8 +136,9 @@ class DriveBaseAPIView(APIView, ABC):
             if serializer.is_valid():
                 print('lol kek')
                 serializer.save()
+            return Response({"common_url": random_url})
         else:
-            Response({"error": 'Необходим параметр "operation"'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": 'Необходим параметр "operation"'}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({'result': 'aaa'})
     def post(self, request, *args, **kwargs):

@@ -54,7 +54,7 @@ export async function listFiles(path: string, operation: string, random_url: str
     const token = localStorage.getItem('token');
     const headers = token ? { Authorization: `Token ${token}` } : {};
     var response;
-    var RES_URL = `${API_URL}/drive/`;
+    var RES_URL = `${API_URL}/drive`;
     if (!!random_url) {
       console.log('i am here');
       RES_URL = `${API_URL}/common/${random_url}/`;
@@ -99,7 +99,7 @@ export async function addFile(
     const token = localStorage.getItem('token');
     const headers = token ? { Authorization: `Token ${token}` } : {};
 
-    var RES_URL = `${API_URL}/drive/`;
+    var RES_URL = `${API_URL}/drive`;
     if (!!random_url) {
       console.log('i am here');
       RES_URL = `${API_URL}/common/${random_url}/`;
@@ -159,7 +159,7 @@ export async function updateFile(
     const token = localStorage.getItem('token');
     const headers = token ? { Authorization: `Token ${token}` } : {};
 
-    var RES_URL = `${API_URL}/drive/`;
+    var RES_URL = `${API_URL}/drive`;
     if (!!random_url) {
       console.log('i am here');
       RES_URL = `${API_URL}/common/${random_url}/`;
@@ -192,7 +192,7 @@ export async function deleteFile(path: string, random_url: string | undefined): 
     const token = localStorage.getItem('token');
     const headers = token ? { Authorization: `Token ${token}` } : {};
 
-    var RES_URL = `${API_URL}/drive/`;
+    var RES_URL = `${API_URL}/drive`;
     if (!!random_url) {
       console.log('i am here');
       RES_URL = `${API_URL}/common/${random_url}/`;

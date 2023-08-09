@@ -111,7 +111,7 @@ function FileItem({  name, fileType, owner, modifiedTime, size }: FileItemProps)
 
     async function handleShare() {
         const response = await listFiles(cur_path_arr.join('') + name + '/', 'share', '');
-
+        alert(`http://localhost:3000/common/${response.data.common_url}`)
     }
 
     return (

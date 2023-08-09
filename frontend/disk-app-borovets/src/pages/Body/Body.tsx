@@ -20,10 +20,11 @@ import {useParams} from "react-router-dom";
 
 
 
-export const fetchData = async (cur_path_arr: string[], dispatch: Dispatch, random_url: any) => {
+export const fetchData = async (cur_path_arr: string[], dispatch: Dispatch, random_url: string | undefined) => {
             try {
                 console.log("random_url = ", random_url);
                 const rp = await listFiles(cur_path_arr.join(''), 'ls', random_url);
+                console.log("AAAAAAA");
                 console.log(rp);
                 dispatch(setFileList(rp.data.files));
                 console.log("bruh");
