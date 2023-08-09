@@ -9,6 +9,8 @@ import {deleteFile, listFiles} from "../../http/api";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchData} from "../../pages/Body/Body";
 import {popFromCurPath, pushToCurPath, setCurPath} from "../../redux/store";
+import fileList from "./FileList";
+import {useParams} from "react-router-dom";
 
 
 
@@ -23,6 +25,7 @@ interface FileItemProps {
 
 function FileItem({  name, fileType, owner, modifiedTime, size }: FileItemProps) {
     const dispatch = useDispatch();
+    const { random_url } = useParams();
 
     if (fileType === 'Directory') {
         var iconClassName = 'bi bi-folder-fill';
@@ -44,8 +47,8 @@ function FileItem({  name, fileType, owner, modifiedTime, size }: FileItemProps)
     });
 
     const handleDelete = async () => {
-        await deleteFile(cur_path_arr.join('') + name + '/');
-        fetchData(cur_path_arr, dispatch);
+        await deleteFile(cur_path_arr.join('') + name + '/', random_url);
+        fetchData(cur_path_arr, dispatch, random_url);
     }
 
 
@@ -89,7 +92,7 @@ function FileItem({  name, fileType, owner, modifiedTime, size }: FileItemProps)
 //     it works!!!
     async function handleDownload() {
         try {
-            const response = await listFiles(cur_path_arr.join('') + name + '/', 'download');
+            const response = await listFiles(cur_path_arr.join('') + name + '/', 'download', random_url);
             console.log("type if file = ", response.headers['content-type']);
             console.log("header = ", response.headers);
             const blob = new Blob([response.data], { type: response.headers['content-type'] });
@@ -105,6 +108,11 @@ function FileItem({  name, fileType, owner, modifiedTime, size }: FileItemProps)
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+    async function handleShare() {
+        const response = await listFiles(cur_path_arr.join('') + name + '/', 'share', '');
+
+    }
 
     return (
         <>
@@ -126,8 +134,18 @@ function FileItem({  name, fileType, owner, modifiedTime, size }: FileItemProps)
                 </Modal.Header>
                 <Modal.Body className={style.modalButtons}>
                     {/* Кнопки "Открыть", "Скачать", "Переименовать", "Удалить" */}
-                    <Button variant="primary" onClick={() => console.log('Открыть')}>
+                    <Button variant="primary"
+                            onClick={() => {console.log('Открыть')}}
+                    >
                         Открыть
+                    </Button>
+                    <Button variant="primary"
+                            onClick={() => {
+                                handleShare();
+                                console.log('Открыть')
+                            }}
+                    >
+                        Поделиться
                     </Button>
                     <Button variant="primary"
                             onClick={() => {

@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include, re_path
 
-from drive.views import DriveAPIView
+from drive.views import DriveCommonAPIView, DrivePersonalAPIView
 
 
 from django.conf import settings
@@ -28,5 +28,6 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r'^auth/', include('djoser.urls.authtoken')),
-    path('api/v1/drive', DriveAPIView.as_view()),
+    path('api/v1/drive', DrivePersonalAPIView.as_view()),
+    path('api/v1/common/<str:common_url>/', DriveCommonAPIView.as_view()),
 ]

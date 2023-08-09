@@ -16,12 +16,14 @@ import {listFiles} from "../../http/api";
 import {useDispatch, useSelector} from "react-redux";
 import {pushToCurPath, setCurPath, setFileList} from "../../redux/store";
 import {Dispatch} from "redux";
+import {useParams} from "react-router-dom";
 
 
 
-export const fetchData = async (cur_path_arr: string[], dispatch: Dispatch) => {
+export const fetchData = async (cur_path_arr: string[], dispatch: Dispatch, random_url: any) => {
             try {
-                const rp = await listFiles(cur_path_arr.join(''), 'ls');
+                console.log("random_url = ", random_url);
+                const rp = await listFiles(cur_path_arr.join(''), 'ls', random_url);
                 console.log(rp);
                 dispatch(setFileList(rp.data.files));
                 console.log("bruh");
@@ -33,6 +35,7 @@ export const fetchData = async (cur_path_arr: string[], dispatch: Dispatch) => {
 
 function Body() {
     const dispatch = useDispatch();
+    const { random_url } = useParams();
 
     const cur_path_arr: any = useSelector<any>((state) => {
         return state.app.cur_path;
@@ -43,7 +46,7 @@ function Body() {
     });
 
     useEffect(() => {
-        fetchData(cur_path_arr, dispatch);
+        fetchData(cur_path_arr, dispatch, random_url);
     }, [cur_path_arr]);
 
     // const handleBreadcrumbClick = (index: number) => {

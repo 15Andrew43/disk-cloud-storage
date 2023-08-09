@@ -12,3 +12,12 @@ class FileInfo:
 
     def __repr__(self):
         return f"|Name: {self.name}, Type: {self.file_type}, Size: {self.size} bytes, MTime: {self.modified_time}, CTime: {self.created_time}|"
+
+
+class CommonUrl(models.Model):
+    url = models.CharField(max_length=255, unique=True)
+    local_path = models.CharField(max_length=255)
+    access_rights = models.PositiveIntegerField()
+
+    def __repr__(self):
+        return self.url

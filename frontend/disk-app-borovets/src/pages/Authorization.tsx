@@ -4,19 +4,24 @@ import Button from 'react-bootstrap/Button';
 import { login } from "../http/api";
 import { setIsAuth } from "../redux/store";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {Dispatch} from "redux";
 
-export function handleLogin(dispatch: Dispatch, navigate: ReturnType<typeof useNavigate>): void {
+export function handleLogin(dispatch: Dispatch, navigate: ReturnType<typeof useNavigate>, url: string): void {
   let token = localStorage.getItem('token');
   console.log("token", token);
+  console.log("location = ", url);
 
-  if (!!token && token !== 'undefined') {
-    dispatch(setIsAuth(true));
-    navigate('/fs');
+  if (url.startsWith('/common')) {
+    ;
   } else {
-    dispatch(setIsAuth(false));
-    navigate('/auth');
+    if (!!token && token !== 'undefined') {
+      dispatch(setIsAuth(true));
+      navigate('/fs');
+    } else {
+      dispatch(setIsAuth(false));
+      navigate('/auth');
+    }
   }
 }
 
@@ -26,11 +31,12 @@ function Authorization() {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     await login(username, password); // Вызываем функцию login с параметрами
-    handleLogin(dispatch, navigate);
+    handleLogin(dispatch, navigate, location.pathname);
     setUsername('');
     setPassword('');
   };

@@ -2,6 +2,9 @@ import time
 from pathlib import Path
 import mimetypes
 
+import secrets
+from django.urls import path
+
 from fileprovider.utils import sendfile
 
 from django.utils.encoding import smart_str
@@ -24,14 +27,19 @@ from rest_framework.views import APIView
 from django.views.generic.detail import DetailView
 
 
-from .models import FileInfo
-from .serializers import FileInfoSerializer, FileUploadSerializer
+from .models import FileInfo, CommonUrl
+from .serializers import FileInfoSerializer, FileUploadSerializer, CommonUrlSerializer
 from rest_framework import serializers
 
 from decouple import config
 
+from abc import ABC, abstractmethod
 
-def get_username_path(request, user_local_dir):
+
+
+
+
+def get_safe_path(request, user_local_dir):
     username = request.user.username
     path = request.query_params.get('path')
 
@@ -47,7 +55,7 @@ def get_username_path(request, user_local_dir):
     if not full_path.exists():
         raise FileNotFoundError
 
-    return username, full_path
+    return full_path
 
 
 
@@ -59,7 +67,7 @@ def get_username_path(request, user_local_dir):
 
 
 
-class DriveCommonAPIView(APIView):
+class DriveBaseAPIView(APIView, ABC):
 
     # permission_classes = (ReadOnly, )
     # authentication_classes = (TokenAuthentication, )
@@ -69,15 +77,14 @@ class DriveCommonAPIView(APIView):
         ROOT_DIR = Path(config('ROOT_DIR'))
         self.full_path = ROOT_DIR / local_path
 
-    def get(self, request):
+    @abstractmethod
+    def set_full_path(self, request):
+        pass
 
+    def get(self, request, *args, **kwargs):
         operation = self.request.query_params.get('operation')
         if not operation:
             return Response({"error": 'Необходим параметр "operation"'}, status=status.HTTP_400_BAD_REQUEST)
-
-        # print(self.full_path)
-        # print(path)
-        # print("\n\n\n")
 
         if operation == 'ls':
             if self.full_path.is_dir():
@@ -102,13 +109,7 @@ class DriveCommonAPIView(APIView):
             return Response({'files': serializer.data})
         elif operation == 'download':
             try:
-                print("bababababab")
-                print("full path", self.full_path)
-
                 mime_type, _ = mimetypes.guess_type(self.full_path)
-
-                print(mimetypes.guess_type(self.full_path))
-
                 with self.full_path.open('rb') as f:
                     response = HttpResponse(f.read(),
                                             content_type=mime_type, # 'blob',  # mime_type,
@@ -120,25 +121,31 @@ class DriveCommonAPIView(APIView):
             except FileNotFoundError:
                 return Response({'detail': 'File not found'}, status=status.HTTP_404_NOT_FOUND)
             except Exception as e:
-                print(e)
+                print("MY SOQNLOADED ERROR = ", e)
+                print("FUUL PATH = ", self.full_path)
                 return Response({'detail': 'Error downloading file'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         elif operation == 'open':
             pass
         elif operation == 'share':
-            pass
+            random_url = secrets.token_hex(25)
+            serializer = CommonUrlSerializer(data={
+                'url': random_url,
+                'local_path': str(self.full_path),
+                'access_rights': 1,
+            })
+            if serializer.is_valid():
+                print('lol kek')
+                serializer.save()
         else:
             Response({"error": 'Необходим параметр "operation"'}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({'result': 'aaa'})
-    def post(self, request):
-
+    def post(self, request, *args, **kwargs):
         operation = self.request.query_params.get('operation')
         if not operation:
             return Response({"error": 'Необходим параметр "operation"'}, status=status.HTTP_400_BAD_REQUEST)
 
-
         if operation == 'create':
-            # get file_type and file_name
             file_type = request.data.get('file_type')
             file_name = request.data.get('file_name')
             if not file_type or not file_name:
@@ -162,12 +169,11 @@ class DriveCommonAPIView(APIView):
             if serializer.is_valid():
                 file = serializer.validated_data['file']
                 file_name = file.name
-                file_content = file.read()  # Содержимое файла (байтовая строка)
+                file_content = file.read()
 
                 upload_path = self.full_path / file_name
 
                 try:
-                    # Открываем файл для записи и записываем содержимое
                     with open(upload_path, 'wb') as destination:
                         destination.write(file_content)
                     return Response({'detail': 'File uploaded successfully'}, status=status.HTTP_201_CREATED)
@@ -181,12 +187,9 @@ class DriveCommonAPIView(APIView):
         return Response({'result': 'bbb'})
 
     def put(self, request, *args, **kwargs):
-
         operation = self.request.query_params.get('operation')
         if not operation:
             return Response({"error": 'Необходим параметр "operation"'}, status=status.HTTP_400_BAD_REQUEST)
-
-
 
         if operation == 'mv':
             destination = request.data.get('destination')
@@ -207,7 +210,7 @@ class DriveCommonAPIView(APIView):
 
         return Response({"result": "vvv"})
 
-    def delete(self, request):
+    def delete(self, request, *args, **kwargs):
 
         if self.full_path.is_dir():
             def remove_non_empty_directory(directory_path):
@@ -239,7 +242,7 @@ class DriveCommonAPIView(APIView):
 
 
 
-class DriveAPIView(DriveCommonAPIView):
+class DrivePersonalAPIView(DriveBaseAPIView):
 
     permission_classes = (IsAuthenticated,) # (IsAuthenticatedOrReadOnly, )
     authentication_classes = (TokenAuthentication, )
@@ -247,9 +250,10 @@ class DriveAPIView(DriveCommonAPIView):
     def __init__(self):
         super().__init__('')
 
-    def set_full_path(self, request):
+    def set_full_path(self, request, *args, **kwargs):
         try:
-            username, full_path = get_username_path(request, Path(config('ROOT_DIR')) / request.user.username)
+            username = request.user.username
+            full_path = get_safe_path(request, Path(config('ROOT_DIR')) / username)
         except ValidationError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         except PermissionDenied as e:
@@ -260,14 +264,14 @@ class DriveAPIView(DriveCommonAPIView):
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         self.username = username
-        self.full_path = full_path
+        self.full_path = Path(full_path)
 
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         self.set_full_path(request)
         return super().get(request)
 
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         self.set_full_path(request)
         return super().post(request)
 
@@ -275,7 +279,68 @@ class DriveAPIView(DriveCommonAPIView):
         self.set_full_path(request)
         return super().put(request)
 
-    def delete(self, request):
+    def delete(self, request, *args, **kwargs):
         self.set_full_path(request)
         return super().delete(request)
 
+
+
+class DriveCommonAPIView(DriveBaseAPIView):
+
+    # permission_classes = (IsAuthenticated,) # (IsAuthenticatedOrReadOnly, )
+    # authentication_classes = (TokenAuthentication, )
+
+    def __init__(self):
+        super().__init__('')
+
+    def set_full_path(self, request, *args, **kwargs):
+        print("QWEQWEWQEQWE = ", args)
+        try:
+            common_url = args[0]
+            if not common_url:
+                return Response({"error": 'Необходим параметр "common_url"'}, status=status.HTTP_400_BAD_REQUEST)
+
+            common_url_instance = CommonUrl.objects.get(url=common_url)
+
+            username = request.user.username
+
+            full_path = get_safe_path(request, self.full_path / common_url_instance.local_path)
+            # full_path = common_url_instance.local_path
+
+            # Проверка прав доступа, если необходимо
+            access_rights = common_url_instance.access_rights
+            # Ваш код для проверки прав доступа
+
+        except CommonUrl.DoesNotExist:
+            return Response({"error": "Такой common_url не найден"}, status=status.HTTP_404_NOT_FOUND)
+        except PermissionDenied as e:
+            return Response({"error": str(e)}, status=status.HTTP_403_FORBIDDEN)
+        except FileNotFoundError as e:
+            return Response({"error": "Такого пути не существует"}, status=status.HTTP_404_NOT_FOUND)
+        except SuspiciousOperation as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        self.username = username
+        self.full_path = Path(full_path)
+
+        # Установка прав доступа, если необходимо
+        # self.access_rights = access_rights
+
+    def get(self, request, *args, **kwargs):
+        # print("common getgetggetgget = ", kwargs['common_url'])
+        self.set_full_path(request, kwargs['common_url'])
+        print("full path from common = ", self.full_path)
+        return super().get(request)
+
+
+    def post(self, request,*args, **kwargs):
+        self.set_full_path(request, kwargs['common_url'])
+        return super().post(request)
+
+    def put(self, request, *args, **kwargs):
+        self.set_full_path(request, kwargs['common_url'])
+        return super().put(request)
+
+    def delete(self, request, *args, **kwargs):
+        self.set_full_path(request, kwargs['common_url'])
+        return super().delete(request)

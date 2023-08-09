@@ -49,51 +49,33 @@ export async function logout(): Promise<any | ErrorResponse> {
   }
 }
 
-export async function listFiles(path: string, operation: string): Promise<any | ErrorResponse> {
+export async function listFiles(path: string, operation: string, random_url: string | undefined): Promise<any | ErrorResponse> {
   try {
-    if (operation === 'download') {
-      const token = localStorage.getItem('token');
-    const headers = token ? { Authorization: `Token ${token}`, /*Accept: 'application/octet-stream'*/ } : {};
-
-    const response = await axios.get<any>(`${API_URL}/drive`, {
-      params: { path, operation, cacheBustTimestamp: Date.now() },
-      headers,
-      responseType: 'blob',
-      // timeout: 120,
-    });
-
-    console.log("\n\n\n");
-    console.log("uuuuuuuuu");
-    console.log(response);
-    // if (operation === 'ls') {
-    //   return response.data.files;
-      return response;
-    // } else if (operation === 'download') {
-    //   return response.data;
-    // } else {
-    //   ;
-    // }
-    } else if (operation === 'ls') {
-      const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
     const headers = token ? { Authorization: `Token ${token}` } : {};
-
-    const response = await axios.get<any>(`${API_URL}/drive`, {
-      params: { path, operation },
-      headers,
-    });
-
+    var response;
+    var RES_URL = `${API_URL}/drive/`;
+    if (!!random_url) {
+      console.log('i am here');
+      RES_URL = `${API_URL}/common/${random_url}/`;
+    }
+    if (operation === 'download') {
+      response = await axios.get<any>(RES_URL, {
+        params: {path, operation, cacheBustTimestamp: Date.now()},
+        headers,
+        responseType: 'blob',
+      });
+    } else if (operation === 'ls' || operation === 'share') {
+      response = await axios.get<any>(RES_URL, {
+        params: {path, operation},
+        headers,
+      });
+    }
     console.log("\n\n\n");
     console.log("uuuuuuuuu");
     console.log(response);
-    // if (operation === 'ls') {
-    //   return response.data.files;
-      return response;
-    // } else if (operation === 'download') {
-    //   return response.data;
-    // } else {
-    //   ;
-    // }
-    }
+
+    return response;
 
   } catch (error: any) {
     console.log('pppppppppppppp');
@@ -110,15 +92,22 @@ export async function listFiles(path: string, operation: string): Promise<any | 
 export async function addFile(
   path: string,
   operation: string,
-  fileData: { file_name: string; file_type: string, file_content: string } | any
+  fileData: { file_name: string; file_type: string, file_content: string } | any,
+  random_url: string | undefined
 ): Promise<any | ErrorResponse> {
   try {
     const token = localStorage.getItem('token');
     const headers = token ? { Authorization: `Token ${token}` } : {};
 
+    var RES_URL = `${API_URL}/drive/`;
+    if (!!random_url) {
+      console.log('i am here');
+      RES_URL = `${API_URL}/common/${random_url}/`;
+    }
+
     if (operation === 'create') {
       const response = await axios.post<any>(
-        `${API_URL}/drive`,
+        RES_URL,
         {
           file_name: fileData.file_name,
           file_type: fileData.file_type,
@@ -135,7 +124,7 @@ export async function addFile(
       formData.append('file', fileData);
 
       const response = await axios.post<any>(
-      `${API_URL}/drive`,
+      RES_URL,
           formData,
       {
         params: { path, operation: 'upload' },
@@ -159,34 +148,25 @@ export async function addFile(
   }
 }
 
-///////////////////////////////////////////////////////////////
-async function uploadFile(path: string, selectedFile: File): Promise<any> {
-  try {
-    const token = localStorage.getItem('token');
-    const headers = token ? { Authorization: `Token ${token}` } : {};
-
-
-  } catch (error: any) {
-    if (error.response) {
-      return { error: error.response.data.detail };
-    } else {
-      return { error: 'An error occurred' };
-    }
-  }
-}
-//////////////////////////////////////////////////////////////
 
 export async function updateFile(
   path: string,
   operation: string,
-  updateData: { destination: string; data: string }
+  updateData: { destination: string; data: string },
+  random_url: string | undefined
 ): Promise<any | ErrorResponse> {
   try {
     const token = localStorage.getItem('token');
     const headers = token ? { Authorization: `Token ${token}` } : {};
 
+    var RES_URL = `${API_URL}/drive/`;
+    if (!!random_url) {
+      console.log('i am here');
+      RES_URL = `${API_URL}/common/${random_url}/`;
+    }
+
     const response = await axios.put<any>(
-      `${API_URL}/drive`,
+      RES_URL,
       {
         path,
         operation,
@@ -207,12 +187,18 @@ export async function updateFile(
   }
 }
 
-export async function deleteFile(path: string): Promise<any | ErrorResponse> {
+export async function deleteFile(path: string, random_url: string | undefined): Promise<any | ErrorResponse> {
   try {
     const token = localStorage.getItem('token');
     const headers = token ? { Authorization: `Token ${token}` } : {};
 
-    const response = await axios.delete<any>(`${API_URL}/drive`, {
+    var RES_URL = `${API_URL}/drive/`;
+    if (!!random_url) {
+      console.log('i am here');
+      RES_URL = `${API_URL}/common/${random_url}/`;
+    }
+
+    const response = await axios.delete<any>(RES_URL, {
       params: { path },
       headers,
     });

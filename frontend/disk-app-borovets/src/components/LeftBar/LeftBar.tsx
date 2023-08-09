@@ -10,8 +10,10 @@ import {addFile, API_URL} from "../../http/api";
 import axios from "axios";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchData} from "../../pages/Body/Body";
+import {useParams} from "react-router-dom";
 function LeftBar() {
     const dispatch = useDispatch();
+    const { random_url } = useParams();
 
     const cur_path_arr: any = useSelector<any>((state) => {
         return state.app.cur_path;
@@ -41,13 +43,13 @@ function LeftBar() {
       ///////////////////////////////////////////////////////////////////////////////////
 
         for (let i = 0; i < event.target.files.length; i++) {
-            await addFile(cur_path_arr.join(''), 'upload', event.target.files[i]);
+            await addFile(cur_path_arr.join(''), 'upload', event.target.files[i], random_url);
         }
         // var r = await addFile(cur_path_arr.join(''), 'upload', selectedFile);
 
         // console.log("response", r);
 
-        fetchData(cur_path_arr, dispatch);
+        fetchData(cur_path_arr, dispatch, random_url);
 
 
       //////////////////////////////////////////////////////////////////////////////////
