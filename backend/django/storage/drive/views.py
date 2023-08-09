@@ -129,6 +129,7 @@ class DriveBaseAPIView(APIView, ABC):
         elif operation == 'share':
             random_url = secrets.token_hex(25)
             serializer = CommonUrlSerializer(data={
+                'owner': self.username,
                 'url': random_url,
                 'local_path': str(self.full_path),
                 'access_rights': 1,

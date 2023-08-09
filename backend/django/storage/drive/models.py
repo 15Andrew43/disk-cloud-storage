@@ -15,7 +15,7 @@ class FileInfo:
 
 
 class CommonUrl(models.Model):
-    owner = models.CharField(max_length=100, unique=True)
+    owner = models.CharField(max_length=100, unique=True, null=True)
     url = models.CharField(max_length=255, unique=True)
     local_path = models.CharField(max_length=255)
     access_rights = models.PositiveIntegerField()
