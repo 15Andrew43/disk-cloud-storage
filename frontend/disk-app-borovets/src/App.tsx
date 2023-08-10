@@ -21,6 +21,13 @@ function App() {
         handleLogin(dispatch, navigate, location.pathname);
     }, [])
 
+    // const isAuth = useSelector<any>((state) => {
+    //     console.log("Header!");
+    //     console.log(state);
+    //     console.log(localStorage.getItem('token'));
+    //     return state.app.is_auth;
+    // });
+
 
   return (
 
@@ -30,6 +37,7 @@ function App() {
               <div className={`leftbar-style`}>
                 <LeftBar/>
               </div>
+              {/*<div className={`body-style ${isAuth ? 'authenticated' : 'auth-style'}`}>*/}
               <div className={`body-style`}>
                   <Routes>
                       <Route path="/fs" element={<Body/>} />

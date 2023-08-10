@@ -30,7 +30,7 @@ function Header() {
     return (
         <Navbar expand="lg" className="">
             <Container fluid>
-                <div><Navbar.Brand href="#"><b>Диск</b></Navbar.Brand></div>
+                <div><Navbar.Brand href="/fs"><b>Диск</b></Navbar.Brand></div>
                 <div>
                     <Form className="d-flex" style={{width: "50vw"}}>
                         <Form.Control

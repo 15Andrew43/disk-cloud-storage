@@ -2,11 +2,18 @@
 
 }
 
+.createButton {
+    /*text-overflow: ellipsis;*/
+    margin-right: 15px;
+    color: #F5F5F5;
+
+}
+
 .path {
     display: flex;
     /*margin-left: 20px;*/
     margin-top: 10px;
-    margin-left: 20px;
+    margin-left: 10px;
     /*border: 1px solid #ccc;*/
     /*border-radius: 10px; !* Задаем радиус закругления углов в 10 пикселей *!*/
     /*padding: 5px; !* Добавляем внутренние отступы для контента внутри элемента *!*/
@@ -17,10 +24,19 @@
 .filters {
     display: flex;
     flex-direction: row;
-    margin-left: 20px;
+    /*justify-content: left;*/
+    margin-left: 10px;
     gap: 15px;
     margin-bottom: 20px;
+
 }
+
+/*.filtersButton {*/
+/*    width: 50vw;*/
+/*    overflow: hidden;*/
+/*    white-space: nowrap;*/
+/*    text-overflow: ellipsis;*/
+/*}*/
 
 .sortbuttons {
     margin-left: 10px;
@@ -28,7 +44,10 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    gap: 15px;
+    /*gap: 15px;*/
+    /*overflow: hidden;*/
+    white-space: nowrap;
+    text-overflow: ellipsis;
 
 }
 
