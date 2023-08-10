@@ -11,6 +11,8 @@ import {fetchData} from "../../pages/Body/Body";
 import {popFromCurPath, pushToCurPath, setCurPath} from "../../redux/store";
 import fileList from "./FileList";
 import {useParams} from "react-router-dom";
+import Form from 'react-bootstrap/Form';
+
 
 
 
@@ -115,6 +117,23 @@ function FileItem({  name, fileType, owner, modifiedTime, size }: FileItemProps)
         alert(`http://localhost:3000/common/${response.data.common_url}`);
     }
 
+    const [showRenameModal, setShowRenameModal] = useState(false);
+    const [newPath, setNewPath] = useState('');
+    const [currentPath, setCurrentPath] = useState<string>(''); // Укажите тип строка
+
+    const handleRenameClick = (currentFilePath: string) => {
+        setCurrentPath(currentFilePath);
+        setShowRenameModal(true);
+    };
+
+    const handleRenameModalSave = () => {
+        console.log('Новый путь:', newPath);
+
+        setShowRenameModal(false);
+    };
+
+
+
     return (
         <>
             <div className={style.fileItem}
@@ -156,7 +175,12 @@ function FileItem({  name, fileType, owner, modifiedTime, size }: FileItemProps)
                     }>
                         Скачать
                     </Button>
-                    <Button variant="primary" onClick={() => console.log('Переименовать')}>
+                    <Button variant="primary"
+                            onClick={() => {
+                                setShowRenameModal(true);
+                                console.log('Переименовать')
+                            }
+                    }>
                         Переименовать
                     </Button>
                     <Button variant="danger"
@@ -169,6 +193,30 @@ function FileItem({  name, fileType, owner, modifiedTime, size }: FileItemProps)
                     </Button>
                 </Modal.Body>
             </Modal>
+
+            <Modal show={showRenameModal} onHide={() => setShowRenameModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Изменение пути {cur_path_arr.join('') + name}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <input
+                        type="text"
+                        value={newPath}
+                        onChange={(e) => setNewPath(e.target.value)}
+                        placeholder="Введите новый путь"
+                    />
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowRenameModal(false)}>
+                        Закрыть
+                    </Button>
+                    <Button variant="primary" onClick={handleRenameModalSave}>
+                        Сохранить
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+
         </>
     );
 }
@@ -187,10 +235,26 @@ function getFileIconClassName(fileType: string): string {
             return 'bi bi-file-image';
         case 'pdf':
             return 'bi bi-file-pdf';
+        case 'doc':
+        case 'docx':
+            return 'bi bi-file-word';
+        case 'xls':
+        case 'xlsx':
+            return 'bi bi-file-excel';
+        case 'ppt':
+        case 'pptx':
+            return 'bi bi-file-powerpoint';
+        case 'txt':
+            return 'bi bi-file-text';
+        case 'mp3':
+        case 'wav':
+            return 'bi bi-file-music';
+        // Добавьте другие типы файлов по аналогии
         default:
             return 'bi bi-file';
     }
 }
+
 
 export default FileItem;
 

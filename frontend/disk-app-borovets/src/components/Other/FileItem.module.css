@@ -30,9 +30,13 @@
     /*text-align: center;*/
 }
 
+
+
 .modalButtons {
     display: flex;
-    gap: 15px;
+    gap: 10px;
+    flex-wrap: wrap;
+
 }
 
 
