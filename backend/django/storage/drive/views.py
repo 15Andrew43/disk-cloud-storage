@@ -252,67 +252,54 @@ class DrivePersonalAPIView(DriveBaseAPIView):
     def __init__(self):
         super().__init__('')
 
+    def safe_set_full_path(self, request, *args, **kwargs):
+        try:
+            self.set_full_path(request)
+        except ValidationError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except PermissionDenied as e:
+            return Response({"error": str(e)}, status=status.HTTP_403_FORBIDDEN)
+        except FileNotFoundError as e :
+            return Response({"error": "Такого пути не существует"}, status=status.HTTP_404_NOT_FOUND)
+        except SuspiciousOperation as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({})
+
     def set_full_path(self, request, *args, **kwargs):
         username = request.user.username
         full_path = get_safe_path(request, Path(config('ROOT_DIR')) / username)
-
 
         self.username = username
         self.full_path = Path(full_path)
 
     def get(self, request, *args, **kwargs):
-        try:
-            self.set_full_path(request)
-        except ValidationError as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        except PermissionDenied as e:
-            return Response({"error": str(e)}, status=status.HTTP_403_FORBIDDEN)
-        except FileNotFoundError as e :
-            return Response({"error": "Такого пути не существует"}, status=status.HTTP_404_NOT_FOUND)
-        except SuspiciousOperation as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        return super().get(request)
+        res = self.safe_set_full_path(request)
+        if res.status_code == 200:
+            return super().get(request)
+        else:
+            return res
 
 
     def post(self, request, *args, **kwargs):
-        try:
-            self.set_full_path(request)
-            print('FULL PATH IN POST     PERSONAL = ', self.full_path)
-        except ValidationError as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        except PermissionDenied as e:
-            return Response({"error": str(e)}, status=status.HTTP_403_FORBIDDEN)
-        except FileNotFoundError as e :
-            return Response({"error": "Такого пути не существует"}, status=status.HTTP_404_NOT_FOUND)
-        except SuspiciousOperation as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        return super().post(request)
+        res = self.safe_set_full_path(request)
+        if res.status_code == 200:
+            return super().post(request)
+        else:
+            return res
 
     def put(self, request, *args, **kwargs):
-        try:
-            self.set_full_path(request)
-        except ValidationError as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        except PermissionDenied as e:
-            return Response({"error": str(e)}, status=status.HTTP_403_FORBIDDEN)
-        except FileNotFoundError as e :
-            return Response({"error": "Такого пути не существует"}, status=status.HTTP_404_NOT_FOUND)
-        except SuspiciousOperation as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        return super().put(request)
+        res = self.safe_set_full_path(request)
+        if res.status_code == 200:
+            return super().put(request)
+        else:
+            return res
 
     def delete(self, request, *args, **kwargs):
-        try:
-            self.set_full_path(request)
-        except ValidationError as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        except PermissionDenied as e:
-            return Response({"error": str(e)}, status=status.HTTP_403_FORBIDDEN)
-        except FileNotFoundError as e :
-            return Response({"error": "Такого пути не существует"}, status=status.HTTP_404_NOT_FOUND)
-        except SuspiciousOperation as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        return super().delete(request)
+        res = self.safe_set_full_path(request)
+        if res.status_code == 200:
+            return super().delete(request)
+        else:
+            return res
 
 
 
@@ -323,6 +310,19 @@ class DriveCommonAPIView(DriveBaseAPIView):
 
     def __init__(self):
         super().__init__('')
+
+    def safe_set_full_path(self, request, *args, **kwargs):
+        try:
+            self.set_full_path(request, kwargs['common_url'])
+        except CommonUrl.DoesNotExist:
+            return Response({"error": "Такой common_url не найден"}, status=status.HTTP_404_NOT_FOUND)
+        except PermissionDenied as e:
+            return Response({"error": str(e)}, status=status.HTTP_403_FORBIDDEN)
+        except FileNotFoundError as e:
+            return Response({"error": "Такого пути не существует"}, status=status.HTTP_404_NOT_FOUND)
+        except SuspiciousOperation as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({})
 
     def set_full_path(self, request, *args, **kwargs):
         print("QWEQWEWQEQWE = ", args)
@@ -340,58 +340,30 @@ class DriveCommonAPIView(DriveBaseAPIView):
         self.full_path = Path(full_path)
 
     def get(self, request, *args, **kwargs):
-        # print("common getgetggetgget = ", kwargs['common_url'])
-        try:
-            self.set_full_path(request, kwargs['common_url'])
-        except CommonUrl.DoesNotExist:
-            return Response({"error": "Такой common_url не найден"}, status=status.HTTP_404_NOT_FOUND)
-        except PermissionDenied as e:
-            return Response({"error": str(e)}, status=status.HTTP_403_FORBIDDEN)
-        except FileNotFoundError as e:
-            return Response({"error": "Такого пути не существует"}, status=status.HTTP_404_NOT_FOUND)
-        except SuspiciousOperation as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-        print("full path from common = ", self.full_path)
-        return super().get(request)
+        res = self.safe_set_full_path(request, common_url = kwargs['common_url'])
+        if res.status_code == 200:
+            return super().get(request)
+        else:
+            return res
 
 
     def post(self, request,*args, **kwargs):
-        try:
-            self.set_full_path(request, kwargs['common_url'])
-            print('FULL PATH IN POST     COMMON = ', self.full_path)
-        except CommonUrl.DoesNotExist:
-            return Response({"error": "Такой common_url не найден"}, status=status.HTTP_404_NOT_FOUND)
-        except PermissionDenied as e:
-            return Response({"error": str(e)}, status=status.HTTP_403_FORBIDDEN)
-        except FileNotFoundError as e:
-            return Response({"error": "Такого пути не существует"}, status=status.HTTP_404_NOT_FOUND)
-        except SuspiciousOperation as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        return super().post(request)
+        res = self.safe_set_full_path(request, common_url=kwargs['common_url'])
+        if res.status_code == 200:
+            return super().post(request)
+        else:
+            return res
 
     def put(self, request, *args, **kwargs):
-        try:
-            self.set_full_path(request, kwargs['common_url'])
-        except CommonUrl.DoesNotExist:
-            return Response({"error": "Такой common_url не найден"}, status=status.HTTP_404_NOT_FOUND)
-        except PermissionDenied as e:
-            return Response({"error": str(e)}, status=status.HTTP_403_FORBIDDEN)
-        except FileNotFoundError as e:
-            return Response({"error": "Такого пути не существует"}, status=status.HTTP_404_NOT_FOUND)
-        except SuspiciousOperation as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        return super().put(request)
+        res = self.safe_set_full_path(request, common_url=kwargs['common_url'])
+        if res.status_code == 200:
+            return super().put(request)
+        else:
+            return res
 
     def delete(self, request, *args, **kwargs):
-        try:
-            self.set_full_path(request, kwargs['common_url'])
-        except CommonUrl.DoesNotExist:
-            return Response({"error": "Такой common_url не найден"}, status=status.HTTP_404_NOT_FOUND)
-        except PermissionDenied as e:
-            return Response({"error": str(e)}, status=status.HTTP_403_FORBIDDEN)
-        except FileNotFoundError as e:
-            return Response({"error": "Такого пути не существует"}, status=status.HTTP_404_NOT_FOUND)
-        except SuspiciousOperation as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        return super().delete(request)
+        res = self.safe_set_full_path(request, common_url=kwargs['common_url'])
+        if res.status_code == 200:
+            return super().delete(request)
+        else:
+            return res
