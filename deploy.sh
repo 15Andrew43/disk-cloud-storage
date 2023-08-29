@@ -19,7 +19,7 @@ yarn install
 yarn run build
 rm -rf /var/www/avborovets.ru/html
 mkdir -p /var/www/avborovets.ru/html
-cp ./build/* /var/www/avborovets.ru/html
+cp -r ./build/* /var/www/avborovets.ru/html
 cd ../../
 
 # for nginx
