@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 
 import style from './FileItem.module.css';
-import {deleteFile, listFiles} from "../../http/api";
+import {deleteFile, domain, listFiles} from "../../http/api";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchData} from "../../pages/Body/Body";
 import {popFromCurPath, pushToCurPath, setCurPath} from "../../redux/store";
@@ -112,7 +112,7 @@ function FileItem({  name, fileType, owner, modifiedTime, size }: FileItemProps)
     async function handleShare() {
         const response = await listFiles(cur_path_arr.join('') + name + '/', 'share', '');
         console.log('TTTTTTTTTT', response);
-        alert(`http://localhost:3000/common/${response.data.common_url}`);
+        alert(`http://${domain}/common/${response.data.common_url}`);
     }
 
     return (
