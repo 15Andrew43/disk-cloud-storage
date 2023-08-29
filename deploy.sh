@@ -24,6 +24,7 @@ cd ../../
 
 # for nginx
 cp avborovets.ru /etc/nginx/sites-available/avborovets.ru
+rm -f /etc/nginx/sites-enabled/avborovets.ru
 ln -s /etc/nginx/sites-available/avborovets.ru /etc/nginx/sites-enabled
 
 
