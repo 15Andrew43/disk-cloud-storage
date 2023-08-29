@@ -1,8 +1,10 @@
 import axios from 'axios';
 import { FileInfo } from '../redux/store';
 
-export const API_URL = 'http://localhost:8000/api/v1';
-const HOSTNAME = 'http://localhost:8000';
+export const domain = 'avborovets.ru';
+
+export const API_URL = `http://${domain}/api/v1`;
+const HOSTNAME = `http://${domain}`;
 
 interface ErrorResponse {
   error: string;
@@ -54,20 +56,20 @@ export async function listFiles(path: string, operation: string, random_url: str
     const token = localStorage.getItem('token');
     const headers = token ? { Authorization: `Token ${token}` } : {};
     var response;
-    var RES_URL = `${API_URL}/drive`;
+    var RES_URL = `${API_URL}/drive/`;
     if (!!random_url) {
       console.log('i am here');
       RES_URL = `${API_URL}/common/${random_url}/`;
     }
     if (operation === 'download') {
       response = await axios.get<any>(RES_URL, {
-        params: {path, operation, cacheBustTimestamp: Date.now()},
+        params: { path, operation, cacheBustTimestamp: Date.now() },
         headers,
         responseType: 'blob',
       });
     } else if (operation === 'ls' || operation === 'share') {
       response = await axios.get<any>(RES_URL, {
-        params: {path, operation},
+        params: { path, operation },
         headers,
       });
     }
@@ -99,7 +101,7 @@ export async function addFile(
     const token = localStorage.getItem('token');
     const headers = token ? { Authorization: `Token ${token}` } : {};
 
-    var RES_URL = `${API_URL}/drive`;
+    var RES_URL = `${API_URL}/drive/`;
     if (!!random_url) {
       console.log('i am here');
       RES_URL = `${API_URL}/common/${random_url}/`;
@@ -124,17 +126,17 @@ export async function addFile(
       formData.append('file', fileData);
 
       const response = await axios.post<any>(
-      RES_URL,
-          formData,
-      {
-        params: { path, operation: 'upload' },
-        headers: {
-          ...headers,
-          'Content-Type': 'multipart/form-data', // Важно установить правильный Content-Type для загрузки файлов
-        },
-      }
-    );
-    return response.data;
+        RES_URL,
+        formData,
+        {
+          params: { path, operation: 'upload' },
+          headers: {
+            ...headers,
+            'Content-Type': 'multipart/form-data', // Важно установить правильный Content-Type для загрузки файлов
+          },
+        }
+      );
+      return response.data;
     } else {
       alert('wrong operation in post!!!');
     }
@@ -159,7 +161,7 @@ export async function updateFile(
     const token = localStorage.getItem('token');
     const headers = token ? { Authorization: `Token ${token}` } : {};
 
-    var RES_URL = `${API_URL}/drive`;
+    var RES_URL = `${API_URL}/drive/`;
     if (!!random_url) {
       console.log('i am here');
       RES_URL = `${API_URL}/common/${random_url}/`;
@@ -192,7 +194,7 @@ export async function deleteFile(path: string, random_url: string | undefined): 
     const token = localStorage.getItem('token');
     const headers = token ? { Authorization: `Token ${token}` } : {};
 
-    var RES_URL = `${API_URL}/drive`;
+    var RES_URL = `${API_URL}/drive/`;
     if (!!random_url) {
       console.log('i am here');
       RES_URL = `${API_URL}/common/${random_url}/`;

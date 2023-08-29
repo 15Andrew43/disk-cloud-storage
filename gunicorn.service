@@ -1,0 +1,11 @@
+[Unit]
+Description=gunicorn daemon
+After=network.target
+[Service]
+User=root
+Group=root
+WorkingDirectory=/root/my_google_drive/disk-cloud-storage/backend/django/storage
+# ExecStart=/root/my_google_drive/disk-cloud-storage/backend/django/env/bin/gunicorn --access-logfile - --workers 3 --bind unix:/root/my_google_drive/disk-cloud-storage/backend/django/storage/storage.sock storage.wsgi:application
+ExecStart=/root/my_google_drive/disk-cloud-storage/backend/django/env/bin/gunicorn --access-logfile - --workers 3 --bind 127.0.0.1:8000 storage.wsgi:application
+[Install]
+WantedBy=multi-user.target

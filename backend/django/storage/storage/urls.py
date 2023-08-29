@@ -28,6 +28,6 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r'^auth/', include('djoser.urls.authtoken')),
-    path('api/v1/drive', DrivePersonalAPIView.as_view()),
+    path('api/v1/drive/', DrivePersonalAPIView.as_view()),
     path('api/v1/common/<str:common_url>/', DriveCommonAPIView.as_view()),
 ]
