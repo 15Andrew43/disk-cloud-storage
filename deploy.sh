@@ -3,9 +3,12 @@
 apt-get update
 
 # for backend
+cd backend/django
 python3 -m venv env
 source env/bin/activate
-pip install -r backend/django/storage/requirements.txt
+pip install -r storage/requirements.txt
+deactivate
+cd ../../
 cp gunicorn.service /etc/systemd/system/gunicorn.service
 systemctl start gunicorn
 systemctl enable gunicorn
