@@ -2,6 +2,10 @@
 
 apt-get update
 
+
+# set basedir in backend-side
+########################### TODO ######################
+
 # for backend
 cd backend/django
 python3 -m venv env
